@@ -1,18 +1,18 @@
 from dataclasses import dataclass
 
 @dataclass
-class Color_schema:
+class ColorSchema:
     name: str
     color_RGB: tuple[int, int, int]
 
-class Color_manager:
+class ColorManager:
     def __init__(self):
         self.colors = {}
 
     def add_color(self, assignment: str, name: str, rgb: tuple[int, int, int]):
-        self.colors[assignment] = Color_schema(name, rgb)
+        self.colors[assignment] = ColorSchema(name, rgb)
 
-color_manager = Color_manager()
+color_manager = ColorManager()
 
 
 color_manager.add_color('snake_segment', 'Бирюзово-синий', (39, 113, 122))
