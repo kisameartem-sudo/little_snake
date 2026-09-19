@@ -1,62 +1,74 @@
 import pygame
 from color_shema import color_manager
+from field import Field
 
 
-pygame.init()
+class Game:
+    def __init__(self):
+        pygame.init()
 
-width, height, FPS = 800, 600, 60
+        self.width = 800
+        self.height = 600
+        self.FPS = 60
+        self.running = True
+        self.field = Field(600)
 
-screen = pygame.display.set_mode((width, height))
-pygame.display.set_caption('My_Snake')
-clock = pygame.time.Clock()
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption('My_Snake')
+        self.clock = pygame.time.Clock()
 
-states = {
-    'running': True
-}
+    # -------------------------------------------------
+    # Обработка событий нажатия кнопок
+    # -------------------------------------------------
 
-# -------------------------------------------------
-# Обработка событий нажатия кнопок
-# -------------------------------------------------
+    def handle_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:  # Проверка нажатия на крестик
+                self.running = False
 
-def handle_events():
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:  # Проверка нажатия на крестик
-            states['running'] = False
+            elif event.type == pygame.KEYDOWN:
+                '''Полверка нажатий кнопок'''
+                if event.key == pygame.K_ESCAPE:
+                    self.running = False
 
-        elif event.type == pygame.KEYDOWN:
-            '''Полверка нажатий кнопок'''
-            if event.key == pygame.K_ESCAPE:
-                states['running'] = False
+    # -------------------------------------------------
+    # Непрерывный ввод
+    # -------------------------------------------------
+    def handle_input(self):
+        ...
 
-# -------------------------------------------------
-# Непрерывный ввод
-# -------------------------------------------------
-def handle_input():
-    ...
+    # -------------------------------------------------
+    # 3. Изменение состояния
+    # -------------------------------------------------
+    def update(self):
+        ...
 
-# -------------------------------------------------
-# 3. Изменение состояния
-# -------------------------------------------------
-def update():
-    ...
+    # -------------------------------------------------
+    # 4. Отрисовка
+    # -------------------------------------------------
+    def render(self):
+        self.screen.fill(color_manager.colors['background'].color_RGB)
+        self.screen.blit(self.field.draw_cells(), (200, 0))
 
-# -------------------------------------------------
-# 4. Отрисовка
-# -------------------------------------------------
-def render():
-    screen.fill(color_manager.colors['background'].color_RGB)
+        pygame.display.flip()
 
-    pygame.display.flip()
+    def play(self):
+        try:
+            while self.running:
+                dt = self.clock.tick(self.FPS) / 1000.0
+                self.handle_events()
+                self.handle_input()
+                self.update()
+                self.render()
 
-try:
-    while states['running']:
-        dt = clock.tick(FPS) / 1000.0
-        handle_events()
-        handle_input()
-        update()
-        render()
-
-finally:
-    pygame.quit()
+        finally:
+            pygame.quit()
 
 
+
+def main():
+    snake_game = Game()
+    snake_game.play()
+
+if __name__ == '__main__':
+    main()
