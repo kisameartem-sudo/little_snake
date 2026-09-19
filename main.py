@@ -1,5 +1,5 @@
 import pygame
-from color_shema import *
+from color_shema import color_manager
 
 
 pygame.init()
