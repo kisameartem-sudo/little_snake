@@ -1,9 +1,10 @@
 import pygame
+from color_shema import *
 
 
 pygame.init()
 
-width, height = 800, 600
+width, height, FPS = 800, 600, 60
 
 screen = pygame.display.set_mode((width, height))
 pygame.display.set_caption('My_Snake')
@@ -13,9 +14,9 @@ states = {
     'running': True
 }
 
-#---------------------------------
+# -------------------------------------------------
 # Обработка событий нажатия кнопок
-#---------------------------------
+# -------------------------------------------------
 
 def handle_events():
     for event in pygame.event.get():
@@ -27,9 +28,33 @@ def handle_events():
             if event.key == pygame.K_ESCAPE:
                 states['running'] = False
 
+# -------------------------------------------------
+# Непрерывный ввод
+# -------------------------------------------------
+def handle_input():
+    ...
+
+# -------------------------------------------------
+# 3. Изменение состояния
+# -------------------------------------------------
+def update():
+    ...
+
+# -------------------------------------------------
+# 4. Отрисовка
+# -------------------------------------------------
+def render():
+    screen.fill(color_manager.colors['background'].color_RGB)
+
+    pygame.display.flip()
+
 try:
     while states['running']:
-        clock.tick(60)
+        dt = clock.tick(FPS) / 1000.0
+        handle_events()
+        handle_input()
+        update()
+        render()
 
 finally:
     pygame.quit()
