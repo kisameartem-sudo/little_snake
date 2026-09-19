@@ -17,7 +17,7 @@ color_manager = ColorManager()
 
 color_manager.add_color('snake_segment', 'Бирюзово-синий', (39, 113, 122))
 color_manager.add_color('snake_head', 'Припылённая бирюза', (48, 143, 149))
-color_manager.add_color('cells', 'Тёплый бежевый', (199, 173, 143))
+color_manager.add_color('cells_bord', 'Тёплый бежевый', (199, 173, 143))
 color_manager.add_color('background', 'Мягкий айвори', (232, 230, 221))
 color_manager.add_color('fruit', 'Винно-красный', (102, 11, 18))
 
