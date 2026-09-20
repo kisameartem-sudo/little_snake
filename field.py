@@ -1,30 +1,24 @@
 import pygame
-from dataclasses import dataclass
 from color_shema import color_manager
-
-# @dataclass()
-# class Cell:
-#     # assignment: str
-#     color: tuple[int, int, int]
 
 class Field:
     def __init__(self, field_size):
         self.surface = pygame.Surface((field_size, field_size))
         self.num_cells = 20
-        self.cell_size = field_size // 20
+        self.cell_size = field_size // self.num_cells
         self.cells = []
         self._create_field()
 
     def _create_field(self):
-        for i in range(self.num_cells):
+        for col in range(self.num_cells):
             self.cells.append([])
-            for j in range(self.num_cells):
-                self.cells[i].append(pygame.Rect(self.cell_size*i, self.cell_size*j, self.cell_size, self.cell_size))
+            for row in range(self.num_cells):
+                self.cells[col].append(pygame.Rect(self.cell_size*col, self.cell_size*row, self.cell_size, self.cell_size))
 
     def draw_cells(self):
         self.surface.fill((248, 248, 248))
-        for row in range(self.num_cells):
-            for cell in self.cells[row]:
+        for col in range(self.num_cells):
+            for cell in self.cells[col]:
                 pygame.draw.rect(
                     self.surface,
                     color_manager.colors['background'].color_RGB,
@@ -36,3 +30,30 @@ class Field:
                     cell,
                     width=2,
                 )
+
+    def draw_snake(self, snake):
+        cur_snake = snake
+        pygame.draw.rect(
+            self.surface,
+            color_manager.colors['snake_head'].color_RGB,
+            (cur_snake[0][0] * self.cell_size, cur_snake[0][1] * self.cell_size, self.cell_size, self.cell_size ),
+            border_radius=10,
+        )
+
+        if len(cur_snake) > 1:
+            for seg in cur_snake[1:]:
+                pygame.draw.rect(
+                    self.surface,
+                    color_manager.colors['snake_segment'].color_RGB,
+                    (seg[0] * self.cell_size, seg[1] * self.cell_size, self.cell_size, self.cell_size),
+                    border_radius=5,
+                )
+
+    def draw_fruits(self, fruits):
+        for fruit in fruits:
+            pygame.draw.rect(
+                self.surface,
+                color_manager.colors['fruit'].color_RGB,
+                (fruit[0] * self.cell_size, fruit[1] * self.cell_size, self.cell_size, self.cell_size),
+                border_radius=40,
+            )
