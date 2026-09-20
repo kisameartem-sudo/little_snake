@@ -30,6 +30,8 @@ class Game:
             'move_interval': 0.3
         }
 
+        self.previous_snake = self.snake.get_snake()
+
     # -------------------------------------------------
     # Обработка событий нажатия кнопок
     # -------------------------------------------------
@@ -67,16 +69,18 @@ class Game:
         if self.moving['move_timer'] >= self.moving['move_interval']:
             self.moving['move_timer'] -= self.moving['move_interval']
 
-            snake = set(self.snake.get_snake())
+            snake = self.snake.get_snake()
             snake_head = self.snake.next_head_pos()
+            self.previous_snake = snake
+
             if snake_head in self.fruits.get_fruits():
-                self.fruits.remove_fruit(snake_head, snake)
+                self.fruits.remove_fruit(snake_head, set(snake))
                 self.snake.move(True)
             else:
                 self.snake.move()
 
             if self.fruits.update_delay():
-                self.fruits.add_fruit(snake)
+                self.fruits.add_fruit(set(snake))
 
 
     # -------------------------------------------------
@@ -85,7 +89,14 @@ class Game:
     def render(self):
         self.field.draw_cells()  # Рисуем поле
         self.field.draw_fruits(self.fruits.get_fruits())
-        self.field.draw_snake(self.snake.get_snake())  # Рисуем змею
+
+        alpha = self.moving['move_timer'] / self.moving['move_interval']
+
+        snake_head = self.snake.get_snake()[0]
+        visual_x = self.previous_snake[0][0] + (snake_head[0] - self.previous_snake[0][0]) * alpha
+        visual_y = self.previous_snake[0][1] + (snake_head[1] - self.previous_snake[0][1]) * alpha
+        self.field.draw_snake([[visual_x, visual_y]])
+        # self.field.draw_snake(self.snake.get_snake())  # Рисуем змею
 
         self.screen.fill(color_manager.colors['background'].color_RGB)  # Рисуем задник
         self.screen.blit(self.field.surface, (200, 0))  # Отображаем поле
