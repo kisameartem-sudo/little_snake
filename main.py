@@ -47,8 +47,9 @@ class Game:
     # 4. Отрисовка
     # -------------------------------------------------
     def render(self):
+        self.field.draw_cells()
         self.screen.fill(color_manager.colors['background'].color_RGB)
-        self.screen.blit(self.field.draw_cells(), (200, 0))
+        self.screen.blit(self.field.surface, (200, 0))
 
         pygame.display.flip()
 
