@@ -33,27 +33,24 @@ class Field:
 
     def draw_snake(self, snake):
         cur_snake = snake
-        pygame.draw.rect(
-            self.surface,
-            color_manager.colors['snake_head'].color_RGB,
-            (cur_snake[0][0] * self.cell_size, cur_snake[0][1] * self.cell_size, self.cell_size, self.cell_size ),
-            border_radius=10,
-        )
+        self.draw_rect('snake_head', cur_snake[0][0], cur_snake[0][1], 10)
 
         if len(cur_snake) > 1:
             for seg in cur_snake[1:]:
-                pygame.draw.rect(
-                    self.surface,
-                    color_manager.colors['snake_segment'].color_RGB,
-                    (seg[0] * self.cell_size, seg[1] * self.cell_size, self.cell_size, self.cell_size),
-                    border_radius=5,
-                )
+                self.draw_rect('snake_segment', seg[0], seg[1], 5)
 
     def draw_fruits(self, fruits):
         for fruit in fruits:
-            pygame.draw.rect(
-                self.surface,
-                color_manager.colors['fruit'].color_RGB,
-                (fruit[0] * self.cell_size, fruit[1] * self.cell_size, self.cell_size, self.cell_size),
-                border_radius=40,
-            )
+            self.draw_rect('fruit', fruit[0], fruit[1], 40)
+
+
+    def draw_rect(self, color, x, y, bord):
+        pygame.draw.rect(
+            self.surface,
+            color_manager.colors[color].color_RGB,
+            (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
+            border_radius=bord
+        )
+
+        self.draw_rect(color, x - self.num_cells, y, bord) if x > self.num_cells-1 else None
+        self.draw_rect(color, self.num_cells + x, y, bord) if x < 0 else None

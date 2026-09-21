@@ -94,7 +94,6 @@ class Game:
         snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, self.field.num_cells)
 
         self.field.draw_snake(snake_to_draw)
-        # self.field.draw_snake(self.snake.get_snake())  # Рисуем змею
 
         self.screen.fill(color_manager.colors['background'].color_RGB)  # Рисуем задник
         self.screen.blit(self.field.surface, (200, 0))  # Отображаем поле
@@ -115,21 +114,10 @@ class Game:
 
     @staticmethod
     def wrapped_delta(old, new, field_size):
-        delta_x = new[0] - old[0]
-        delta_y = new[1] - old[1]
+        half_size = field_size // 2
+        delta = new - old
+        return -1 if delta > half_size else 1 if delta < -half_size else delta
 
-        if delta_x > 10:
-            delta_x = -1
-        elif delta_x < -10:
-            delta_x = 1
-
-        if delta_y > 10:
-            delta_y = -1
-        elif delta_y < -10:
-            delta_y = 1
-
-
-        return delta_x, delta_y
 
     @staticmethod
     def moving_snake(old_snake, snake, alpha, field_size):
@@ -137,9 +125,8 @@ class Game:
 
         for i, seg in enumerate(snake):
             try:
-                delta = Game.wrapped_delta((old_snake[i][0], old_snake[i][1]), (snake[i][0], snake[i][1]), field_size)
-                visual_x = old_snake[i][0] + delta[0] * alpha
-                visual_y = old_snake[i][1] + delta[1] * alpha
+                visual_x = old_snake[i][0] + Game.wrapped_delta(old_snake[i][0], seg[0], field_size) * alpha
+                visual_y = old_snake[i][1] + Game.wrapped_delta(old_snake[i][1], seg[1], field_size) * alpha
                 snake_to_draw.append((visual_x, visual_y))
             except IndexError:
                 snake_to_draw.append(snake[-1])
