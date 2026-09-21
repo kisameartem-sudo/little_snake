@@ -15,8 +15,8 @@ class Game:
         self.running = True
         self.field = Field(600)
 
-        self.snake = Snake(15,
-                           15,
+        self.snake = Snake(1,
+                           1,
                            self.field.num_cells)
         self.fruits = Fruits(self.field.num_cells,
                              set(self.snake.get_snake()))
@@ -91,11 +91,10 @@ class Game:
         self.field.draw_fruits(self.fruits.get_fruits())
 
         alpha = self.moving['move_timer'] / self.moving['move_interval']
+        print(self.snake.get_snake())
+        snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha)
 
-        snake_head = self.snake.get_snake()[0]
-        visual_x = self.previous_snake[0][0] + (snake_head[0] - self.previous_snake[0][0]) * alpha
-        visual_y = self.previous_snake[0][1] + (snake_head[1] - self.previous_snake[0][1]) * alpha
-        self.field.draw_snake([[visual_x, visual_y]])
+        self.field.draw_snake(snake_to_draw)
         # self.field.draw_snake(self.snake.get_snake())  # Рисуем змею
 
         self.screen.fill(color_manager.colors['background'].color_RGB)  # Рисуем задник
@@ -115,7 +114,18 @@ class Game:
         finally:
             pygame.quit()
 
+    @staticmethod
+    def moving_snake(old_snake, snake, alpha):
+        snake_to_draw = []
+        for i, seg in enumerate(snake):
+            try:
+                visual_x = old_snake[i][0] + (snake[i][0] - old_snake[i][0]) * alpha
+                visual_y = old_snake[i][1] + (snake[i][1] - old_snake[i][1]) * alpha
+                snake_to_draw.append((visual_x, visual_y))
+            except IndexError:
+                snake_to_draw.append(snake[-1])
 
+        return snake_to_draw
 
 def main():
     snake_game = Game()
