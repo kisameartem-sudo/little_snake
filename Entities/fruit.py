@@ -1,11 +1,12 @@
 from random import randint
+from snake.little_snake.settings import NUM_CELLS, MAX_NUM_FRUITS, DELAY_TO_NEW_FRUIT
 
 class Fruits:
-    def __init__(self, max_cells, excluded):
-        self.max_cell = max_cells - 1
+    def __init__(self, excluded):
+        self.max_cell = NUM_CELLS - 1
         self.fruits = set()
         self.add_fruit(excluded)
-        self.delay_to_add_fruit = 4
+        self.delay_to_add_fruit = MAX_NUM_FRUITS
 
     def update_delay(self):
         self.delay_to_add_fruit -= 1
@@ -14,7 +15,7 @@ class Fruits:
             return True
 
     def add_fruit(self, excluded: set):
-        if len(self.fruits) == 4:
+        if len(self.fruits) == MAX_NUM_FRUITS:
             return
 
         excluded.update(self.fruits)

@@ -1,10 +1,10 @@
 import pygame
-from color_shema import color_manager
+from snake.little_snake.colors import color_manager
 
 class Field:
     def __init__(self, field_size):
         self.surface = pygame.Surface((field_size, field_size))
-        self.num_cells = 20
+        self.num_cells = 10
         self.cell_size = field_size // self.num_cells
         self.cells = []
         self._create_field()
@@ -51,6 +51,19 @@ class Field:
             (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
             border_radius=bord
         )
+        if x > self.num_cells-1:
+            self.draw_part(color, x - self.num_cells, y, bord)
+        if x < 0:
+            self.draw_part(color, self.num_cells + x, y, bord)
+        if y > self.num_cells-1:
+            self.draw_part(color, x, y - self.num_cells, bord)
+        if y < 0:
+            self.draw_part(color, x, self.num_cells + y, bord)
 
-        self.draw_rect(color, x - self.num_cells, y, bord) if x > self.num_cells-1 else None
-        self.draw_rect(color, self.num_cells + x, y, bord) if x < 0 else None
+    def draw_part(self, color, x, y, bord):
+        pygame.draw.rect(
+            self.surface,
+            color_manager.colors[color].color_RGB,
+            (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
+            border_radius=bord
+        )

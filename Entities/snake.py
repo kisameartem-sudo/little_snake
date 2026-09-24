@@ -31,6 +31,7 @@ class Snake:
                 return (self.snake[0][0] + 1) % self.max_cell, self.snake[0][1]
             case None:
                 return self.snake[0][0], self.snake[0][1]
+        return None
 
     def move(self, with_grow=False):
         self.snake.appendleft(self.next_head_pos())
