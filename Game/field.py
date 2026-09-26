@@ -1,11 +1,12 @@
 import pygame
+from Computer_graph.snake.settings import HEIGHT
 from Computer_graph.snake.colors import color_manager
 
 class Field:
-    def __init__(self, field_size):
-        self.surface = pygame.Surface((field_size, field_size))
+    def __init__(self):
+        self.surface = pygame.Surface((HEIGHT, HEIGHT))
         self.num_cells = 10
-        self.cell_size = field_size // self.num_cells
+        self.cell_size = HEIGHT // self.num_cells
         self.cells = []
         self._create_field()
 

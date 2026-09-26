@@ -4,8 +4,9 @@ from Computer_graph.snake.colors import color_manager
 
 class MainMenu:
     def __init__(self):
-        self.surface = pygame.Surface((WIDTH // 2, HEIGHT // 2))
+        self.surface = pygame.Surface((WIDTH, HEIGHT))
         self.buttons = {} # пока заглушка
+        self.draw_menu()
 
     def draw_buttons(self):
         pass

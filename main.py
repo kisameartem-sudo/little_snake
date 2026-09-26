@@ -2,6 +2,7 @@ import pygame
 from colors import color_manager
 from Computer_graph.snake.Game.field import Field
 from Computer_graph.snake.Game.menu import MainMenu
+from Computer_graph.snake.Game.ui import UI
 from Entities.snake import Snake
 from Computer_graph.snake.Entities.fruit import Fruits
 from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
@@ -22,7 +23,8 @@ class Game:
         self.height = HEIGHT
         self.FPS = FPS
         self.running = True
-        self.field = Field(self.height)
+        self.ui = UI()
+        self.field = Field()
         self.main_menu = MainMenu()
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
@@ -52,11 +54,12 @@ class Game:
     # -------------------------------------------------
 
     def handle_events(self):
+        print(self.game_state)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Проверка нажатия на крестик
                 self.running = False
 
-            elif self.game_state == GameState.PLAYING or self.game_state == GameState.PAUSED:
+            elif self.game_state == GameState.PLAYING:
                 '''События во время игры'''
                 if event.type == pygame.KEYDOWN:
                     '''Проверка нажатий кнопок'''
@@ -64,10 +67,7 @@ class Game:
                         self.game_state = GameState.MAIN_MENU
 
                     if event.key == pygame.K_SPACE:
-                        if self.game_state == GameState.PLAYING:
-                            self.game_state = GameState.PAUSED
-                        else:
-                            self.game_state = GameState.PLAYING
+                        self.game_state = GameState.PAUSED
 
                     if event.key == pygame.K_w:
                         self.snake.update_direction('UP')
@@ -77,6 +77,13 @@ class Game:
                         self.snake.update_direction('LEFT')
                     if event.key == pygame.K_s:
                         self.snake.update_direction('DOWN')
+
+            elif self.game_state == GameState.PAUSED:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.restart()
+                    if event.key == pygame.K_SPACE:
+                        self.game_state = GameState.PLAYING
 
             elif self.game_state == GameState.MAIN_MENU:
                 if event.type == pygame.KEYDOWN:
@@ -136,8 +143,9 @@ class Game:
 
             self.field.draw_snake(snake_to_draw)
 
-            self.screen.fill(color_manager.colors['background'].color_RGB)  # Рисуем задник
-            self.screen.blit(self.field.surface, (200, 0))  # Отображаем поле
+              # Рисуем задник
+            self.screen.blit(self.ui.surface, (0, 0))
+            self.screen.blit(self.field.surface, (WIDTH - HEIGHT, 0))  # Отображаем поле
         elif self.game_state == GameState.MAIN_MENU:
             self.screen.blit(self.main_menu.surface, (0, 0))
 
@@ -146,12 +154,11 @@ class Game:
     def play(self):
         try:
             while self.running:
-                print(self.game_state)
                 dt = self.clock.tick(self.FPS) / 1000.0
                 self.handle_events()
                 self.handle_input()
 
-                if self.game_state != GameState.PAUSED:
+                if self.game_state == GameState.PLAYING:
                     self.update(dt)
                 self.render()
 
@@ -179,6 +186,10 @@ class Game:
                 snake_to_draw.append(snake[-1])
 
         return snake_to_draw
+
+    def restart(self):
+        self.__init__()
+
 
 def main():
     snake_game = Game()
