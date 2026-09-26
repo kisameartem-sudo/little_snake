@@ -4,11 +4,18 @@ from snake.little_snake.Game.field import Field
 from Entities.snake import Snake
 from snake.little_snake.Entities.fruit import Fruits
 from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
+from enum import Enum
 
+class GameState(Enum):
+    MAIN_MENU = 1
+    PLAYING = 2
+    PAUSED = 3
+    GAME_OVER = 4
 
 class Game:
     def __init__(self):
         pygame.init()
+        self.game_state = GameState.MAIN_MENU
         # Окно приложения---------------------------
         self.width = WIDTH
         self.height = HEIGHT
@@ -50,6 +57,10 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 '''Полверка нажатий кнопок'''
                 if event.key == pygame.K_ESCAPE:
+                    self.running = False
+                if event.key == pygame.K_SPACE:
+                    if self.game_state.PLAYING:
+                        self.game_state.PAUSED
                     self.running = False
                 if event.key == pygame.K_w:
                     self.snake.update_direction('UP')
