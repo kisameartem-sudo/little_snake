@@ -1,8 +1,9 @@
 import pygame
 from colors import color_manager
-from snake.little_snake.Game.field import Field
+from Computer_graph.snake.Game.field import Field
+from Computer_graph.snake.Game.menu import MainMenu
 from Entities.snake import Snake
-from snake.little_snake.Entities.fruit import Fruits
+from Computer_graph.snake.Entities.fruit import Fruits
 from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
 from enum import Enum
 
@@ -22,6 +23,7 @@ class Game:
         self.FPS = FPS
         self.running = True
         self.field = Field(self.height)
+        self.main_menu = MainMenu()
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
@@ -54,22 +56,32 @@ class Game:
             if event.type == pygame.QUIT:  # Проверка нажатия на крестик
                 self.running = False
 
-            elif event.type == pygame.KEYDOWN:
-                '''Полверка нажатий кнопок'''
-                if event.key == pygame.K_ESCAPE:
-                    self.running = False
-                if event.key == pygame.K_SPACE:
-                    if self.game_state.PLAYING:
-                        self.game_state.PAUSED
-                    self.running = False
-                if event.key == pygame.K_w:
-                    self.snake.update_direction('UP')
-                if event.key == pygame.K_d:
-                    self.snake.update_direction('RIGHT')
-                if event.key == pygame.K_a:
-                    self.snake.update_direction('LEFT')
-                if event.key == pygame.K_s:
-                    self.snake.update_direction('DOWN')
+            elif self.game_state == GameState.PLAYING or self.game_state == GameState.PAUSED:
+                '''События во время игры'''
+                if event.type == pygame.KEYDOWN:
+                    '''Проверка нажатий кнопок'''
+                    if event.key == pygame.K_ESCAPE:
+                        self.game_state = GameState.MAIN_MENU
+
+                    if event.key == pygame.K_SPACE:
+                        if self.game_state == GameState.PLAYING:
+                            self.game_state = GameState.PAUSED
+                        else:
+                            self.game_state = GameState.PLAYING
+
+                    if event.key == pygame.K_w:
+                        self.snake.update_direction('UP')
+                    if event.key == pygame.K_d:
+                        self.snake.update_direction('RIGHT')
+                    if event.key == pygame.K_a:
+                        self.snake.update_direction('LEFT')
+                    if event.key == pygame.K_s:
+                        self.snake.update_direction('DOWN')
+
+            elif self.game_state == GameState.MAIN_MENU:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_TAB:
+                        self.game_state = GameState.PLAYING
 
     # -------------------------------------------------
     # Непрерывный ввод
@@ -115,26 +127,32 @@ class Game:
     # 4. Отрисовка
     # -------------------------------------------------
     def render(self):
-        self.field.draw_cells()  # Рисуем поле
-        self.field.draw_fruits(self.fruits.get_fruits())
+        if self.game_state == GameState.PLAYING:
+            self.field.draw_cells()  # Рисуем поле
+            self.field.draw_fruits(self.fruits.get_fruits())
 
-        alpha = self.moving['move_timer'] / self.moving['move_interval']
-        snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, NUM_CELLS)
+            alpha = self.moving['move_timer'] / self.moving['move_interval']
+            snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, NUM_CELLS)
 
-        self.field.draw_snake(snake_to_draw)
+            self.field.draw_snake(snake_to_draw)
 
-        self.screen.fill(color_manager.colors['background'].color_RGB)  # Рисуем задник
-        self.screen.blit(self.field.surface, (200, 0))  # Отображаем поле
+            self.screen.fill(color_manager.colors['background'].color_RGB)  # Рисуем задник
+            self.screen.blit(self.field.surface, (200, 0))  # Отображаем поле
+        elif self.game_state == GameState.MAIN_MENU:
+            self.screen.blit(self.main_menu.surface, (0, 0))
 
         pygame.display.flip()
 
     def play(self):
         try:
             while self.running:
+                print(self.game_state)
                 dt = self.clock.tick(self.FPS) / 1000.0
                 self.handle_events()
                 self.handle_input()
-                self.update(dt)
+
+                if self.game_state != GameState.PAUSED:
+                    self.update(dt)
                 self.render()
 
         finally:

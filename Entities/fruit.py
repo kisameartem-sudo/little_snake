@@ -1,5 +1,5 @@
 from random import randint
-from snake.little_snake.settings import NUM_CELLS, MAX_NUM_FRUITS, DELAY_TO_NEW_FRUIT
+from Computer_graph.snake.settings import NUM_CELLS, MAX_NUM_FRUITS, DELAY_TO_NEW_FRUIT
 
 class Fruits:
     def __init__(self, excluded):

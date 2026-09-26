@@ -1,5 +1,5 @@
 import pygame
-from snake.little_snake.colors import color_manager
+from Computer_graph.snake.colors import color_manager
 
 class Field:
     def __init__(self, field_size):
