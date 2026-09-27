@@ -156,7 +156,11 @@ class Game:
             self.screen.blit(self.main_menu.surface, (0, 0))
 
         elif self.game_state == GameState.GAME_OVER:
-            self.screen.blit(self.game_over_menu.surface, (0, 0))
+            self.screen.blit(self.game_over_menu.surface,
+                             (
+                                 (WIDTH - self.game_over_menu.surface.get_width()) // 2,
+                                 (HEIGHT - self.game_over_menu.surface.get_height()) // 2)
+                             )
 
         pygame.display.flip()
 

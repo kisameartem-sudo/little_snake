@@ -19,7 +19,7 @@ SNAKE_START_POS = (1, 1)
 
 class KEYBOARD_KEYS(Enum):
     UP = 'UP'
-    DOWN = 'DOWB'
+    DOWN = 'DOWN'
     LEFT = 'LEFT'
     RIGHT = 'RIGHT'
 
