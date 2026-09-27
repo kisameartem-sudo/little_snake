@@ -1,7 +1,7 @@
 import pygame
 from colors import color_manager
 from Computer_graph.snake.Game.field import Field
-from Computer_graph.snake.Game.menu import MainMenu
+from Computer_graph.snake.Game.main_menu import MainMenu
 from Computer_graph.snake.Game.ui import UI
 from Computer_graph.snake.Game.game_over_menu import GameOverMenu
 from Entities.snake import Snake
