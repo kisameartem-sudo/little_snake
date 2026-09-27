@@ -3,6 +3,7 @@ from colors import color_manager
 from Computer_graph.snake.Game.field import Field
 from Computer_graph.snake.Game.menu import MainMenu
 from Computer_graph.snake.Game.ui import UI
+from Computer_graph.snake.Game.game_over_menu import GameOverMenu
 from Entities.snake import Snake
 from Computer_graph.snake.Entities.fruit import Fruits
 from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
@@ -25,6 +26,7 @@ class Game:
         self.running = True
         self.field = Field()
         self.main_menu = MainMenu()
+        self.game_over_menu = GameOverMenu()
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
@@ -154,7 +156,7 @@ class Game:
             self.screen.blit(self.main_menu.surface, (0, 0))
 
         elif self.game_state == GameState.GAME_OVER:
-            self.screen.blit(self.main_menu.surface, (0, 0))
+            self.screen.blit(self.game_over_menu.surface, (0, 0))
 
         pygame.display.flip()
 

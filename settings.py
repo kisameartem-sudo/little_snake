@@ -4,6 +4,9 @@ WIDTH = 800
 HEIGHT = 600
 FPS = 60
 
+GAME_OVER_WIDTH = 400
+GAME_OVER_HEIGHT = 400
+
 NUM_CELLS = 10
 
 # FRUITS---------------------------

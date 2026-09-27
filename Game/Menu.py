@@ -12,4 +12,4 @@ class MainMenu:
         pass
 
     def draw_menu(self):
-        self.surface.fill(color_manager.colors['main_menu'].color_RGB)
+        self.surface.fill(color_manager.colors['menu'].color_RGB)
