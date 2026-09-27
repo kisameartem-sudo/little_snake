@@ -20,7 +20,7 @@ color_manager.add_color('snake_head', 'Припылённая бирюза', (48
 color_manager.add_color('cells_bord', 'Тёплый бежевый', (199, 173, 143))
 color_manager.add_color('background', 'Мягкий айвори', (232, 230, 221))
 color_manager.add_color('fruit', 'Винно-красный', (102, 11, 18))
-color_manager.add_color('main_menu', 'Песочно-бежевый', (193, 163, 127))
+color_manager.add_color('menu', 'Песочно-бежевый', (193, 163, 127))
 
 
 # ('', 'Глубокий бирюзовый', (27, 80, 86))

@@ -23,15 +23,14 @@ class Game:
         self.height = HEIGHT
         self.FPS = FPS
         self.running = True
-        self.ui = UI()
         self.field = Field()
         self.main_menu = MainMenu()
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
-        # --------------------------------------------
-        # ENTITY--------------------------------------
-        ## SNAKE--------------------------------------
+
+    def new_game_start(self):
+        self.ui = UI()
         self.snake = Snake(SNAKE_START_POS[0],
                            SNAKE_START_POS[1],
                            NUM_CELLS)
@@ -40,21 +39,16 @@ class Game:
             'move_timer': 0,
             'move_interval': 0.3
         }
-
-        self.is_snake_live = True
-
+        # self.is_snake_live = True
         self.previous_snake = self.snake.get_snake()
-        ## FRUITS ----------------------------------------
         self.fruits = Fruits(set(self.snake.get_snake()))
         self.eating_fruit = None
-        # --------------------------------------------
 
     # -------------------------------------------------
     # Обработка событий нажатия кнопок
     # -------------------------------------------------
 
     def handle_events(self):
-        print(self.game_state)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:  # Проверка нажатия на крестик
                 self.running = False
@@ -81,13 +75,23 @@ class Game:
             elif self.game_state == GameState.PAUSED:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
-                        self.restart()
+                        self.new_game_start()
+                        self.game_state = GameState.PLAYING
                     if event.key == pygame.K_SPACE:
                         self.game_state = GameState.PLAYING
+
+            elif self.game_state == GameState.GAME_OVER:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.new_game_start()
+                        self.game_state = GameState.PLAYING
+                    if event.key == pygame.K_ESCAPE:
+                        self.game_state = GameState.MAIN_MENU
 
             elif self.game_state == GameState.MAIN_MENU:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_TAB:
+                        self.new_game_start()
                         self.game_state = GameState.PLAYING
 
     # -------------------------------------------------
@@ -109,25 +113,24 @@ class Game:
             snake_head = self.snake.next_head_pos()
             self.previous_snake = snake
 
-            if self.is_snake_live:
-                if self.eating_fruit is not None:
-                    self.fruits.remove_fruit(self.eating_fruit, set(self.snake.get_snake()))
-                    self.eating_fruit = None
+            if self.eating_fruit is not None:
+                self.fruits.remove_fruit(self.eating_fruit, set(self.snake.get_snake()))
+                self.eating_fruit = None
 
-                if snake_head in self.fruits.get_fruits():
-                    if snake_head in snake[1:]:
-                        self.is_snake_live = False
-                    else:
-                        self.snake.move(True)
-                        self.eating_fruit = snake_head
+            if snake_head in self.fruits.get_fruits():
+                if snake_head in snake[1:]:
+                    self.game_state = GameState.GAME_OVER
                 else:
-                    if snake_head in snake[1:-1]:
-                        self.is_snake_live = False
-                    else:
-                        self.snake.move()
+                    self.snake.move(True)
+                    self.eating_fruit = snake_head
+            else:
+                if snake_head in snake[1:-1]:
+                    self.game_state = GameState.GAME_OVER
+                else:
+                    self.snake.move()
 
-                if self.fruits.update_delay():
-                    self.fruits.add_fruit(set(self.snake.get_snake()))
+            if self.fruits.update_delay():
+                self.fruits.add_fruit(set(self.snake.get_snake()))
 
 
     # -------------------------------------------------
@@ -146,7 +149,11 @@ class Game:
               # Рисуем задник
             self.screen.blit(self.ui.surface, (0, 0))
             self.screen.blit(self.field.surface, (WIDTH - HEIGHT, 0))  # Отображаем поле
+
         elif self.game_state == GameState.MAIN_MENU:
+            self.screen.blit(self.main_menu.surface, (0, 0))
+
+        elif self.game_state == GameState.GAME_OVER:
             self.screen.blit(self.main_menu.surface, (0, 0))
 
         pygame.display.flip()
@@ -186,9 +193,6 @@ class Game:
                 snake_to_draw.append(snake[-1])
 
         return snake_to_draw
-
-    def restart(self):
-        self.__init__()
 
 
 def main():
