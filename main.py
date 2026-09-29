@@ -27,6 +27,7 @@ class Game:
         self.running = True
         self.field = Field()
         self.main_menu = MainMenu()
+        self.active_button = 'START'
         self.game_over_menu = GameOverMenu()
         self.g_o_alpha = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.g_o_alpha.fill((255, 0, 0, 100))
@@ -104,7 +105,13 @@ class Game:
     # Непрерывный ввод
     # -------------------------------------------------
     def handle_input(self):
-        ...
+        mouse_pos = pygame.mouse.get_pos()
+        for button in self.main_menu.buttons:
+            button_rect = self.main_menu.get_button(button)
+            if button_rect.collidepoint(mouse_pos):
+                self.main_menu.change_button_state(button, True)
+            else:
+                self.main_menu.change_button_state(button, False)
 
     # -------------------------------------------------
     # 3. Изменение состояния
@@ -158,6 +165,7 @@ class Game:
             self.draw_scene()
 
         elif self.game_state == GameState.MAIN_MENU:
+            self.main_menu.draw_main_menu()
             self.screen.blit(self.main_menu.surface, (0, 0))
 
         elif self.game_state == GameState.PAUSED:
