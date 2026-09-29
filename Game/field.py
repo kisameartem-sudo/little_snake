@@ -1,6 +1,6 @@
 import pygame
-from Computer_graph.snake.settings import HEIGHT
-from Computer_graph.snake.colors import color_manager
+from snake.little_snake.settings import HEIGHT
+from snake.little_snake.colors import color_manager
 
 class Field:
     def __init__(self):

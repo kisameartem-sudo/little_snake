@@ -1,11 +1,12 @@
 import pygame
 from colors import color_manager
-from Computer_graph.snake.Game.field import Field
-from Computer_graph.snake.Game.main_menu import MainMenu
-from Computer_graph.snake.Game.ui import UI
-from Computer_graph.snake.Game.game_over_menu import GameOverMenu
+from snake.little_snake.Game.field import Field
+from snake.little_snake.Game.main_menu import MainMenu
+from snake.little_snake.Game.ui import UI
+from snake.little_snake.Game.game_over_menu import GameOverMenu
+from snake.little_snake.Game.pause_menu import PauseMenu
 from Entities.snake import Snake
-from Computer_graph.snake.Entities.fruit import Fruits
+from snake.little_snake.Entities.fruit import Fruits
 from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
 from enum import Enum
 
@@ -27,6 +28,9 @@ class Game:
         self.field = Field()
         self.main_menu = MainMenu()
         self.game_over_menu = GameOverMenu()
+        self.g_o_alpha = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+        self.g_o_alpha.fill((255, 0, 0, 100))
+        self.pause_menu = PauseMenu()
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
@@ -138,24 +142,35 @@ class Game:
     # -------------------------------------------------
     # 4. Отрисовка
     # -------------------------------------------------
+    def draw_scene(self):
+        self.field.draw_cells()  # Рисуем поле
+        self.field.draw_fruits(self.fruits.get_fruits())
+
+        alpha = self.moving['move_timer'] / self.moving['move_interval']
+        snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, NUM_CELLS)
+
+        self.field.draw_snake(snake_to_draw)
+        self.screen.blit(self.ui.surface, (0, 0))
+        self.screen.blit(self.field.surface, (WIDTH - HEIGHT, 0))  # Отображаем поле
+
     def render(self):
         if self.game_state == GameState.PLAYING:
-            self.field.draw_cells()  # Рисуем поле
-            self.field.draw_fruits(self.fruits.get_fruits())
-
-            alpha = self.moving['move_timer'] / self.moving['move_interval']
-            snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, NUM_CELLS)
-
-            self.field.draw_snake(snake_to_draw)
-
-              # Рисуем задник
-            self.screen.blit(self.ui.surface, (0, 0))
-            self.screen.blit(self.field.surface, (WIDTH - HEIGHT, 0))  # Отображаем поле
+            self.draw_scene()
 
         elif self.game_state == GameState.MAIN_MENU:
             self.screen.blit(self.main_menu.surface, (0, 0))
 
+        elif self.game_state == GameState.PAUSED:
+            self.draw_scene()
+            self.screen.blit(self.pause_menu.surface,
+                             (
+                                 (WIDTH - self.pause_menu.surface.get_width()) // 2,
+                                 (HEIGHT - self.pause_menu.surface.get_height()) // 2)
+                             )
+
         elif self.game_state == GameState.GAME_OVER:
+            self.draw_scene()
+            self.screen.blit(self.g_o_alpha, (0, 0))
             self.screen.blit(self.game_over_menu.surface,
                              (
                                  (WIDTH - self.game_over_menu.surface.get_width()) // 2,

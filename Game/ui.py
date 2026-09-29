@@ -1,6 +1,6 @@
 import pygame
-from Computer_graph.snake.settings import WIDTH, HEIGHT
-from Computer_graph.snake.colors import color_manager
+from snake.little_snake.settings import WIDTH, HEIGHT
+from snake.little_snake.colors import color_manager
 
 class UI:
     def __init__(self):
