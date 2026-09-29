@@ -27,7 +27,6 @@ class Game:
         self.running = True
         self.field = Field()
         self.main_menu = MainMenu()
-        self.active_button = 'START'
         self.game_over_menu = GameOverMenu()
         self.g_o_alpha = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.g_o_alpha.fill((255, 0, 0, 100))
@@ -96,11 +95,13 @@ class Game:
                         self.game_state = GameState.MAIN_MENU
 
             elif self.game_state == GameState.MAIN_MENU:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_TAB:
-                        self.new_game_start()
-                        self.game_state = GameState.PLAYING
-
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if self.main_menu.get_button('START').collidepoint(event.pos):
+                            self.new_game_start()
+                            self.game_state = GameState.PLAYING
+                        if self.main_menu.get_button('EXIT').collidepoint(event.pos):
+                            self.running = False
     # -------------------------------------------------
     # Непрерывный ввод
     # -------------------------------------------------
@@ -192,7 +193,9 @@ class Game:
             while self.running:
                 dt = self.clock.tick(self.FPS) / 1000.0
                 self.handle_events()
-                self.handle_input()
+
+                if self.game_state == GameState.MAIN_MENU:
+                    self.handle_input()
 
                 if self.game_state == GameState.PLAYING:
                     self.update(dt)

@@ -7,15 +7,18 @@ class MainMenu:
         self.surface = pygame.Surface((WIDTH, HEIGHT))
         self.button_width = 400
         self.button_height = 100
+        self.gap = 10
         self.font = pygame.font.Font(None, 50)
         self.buttons = {}
         self.new_button('START')
+        self.new_button('MARKET')
+        self.new_button('INFO')
+        self.new_button('EXIT')
         self.draw_main_menu()
 
     def new_button(self, text):
         self.buttons[text] = [pygame.Rect(0,0,self.button_width,self.button_height),
                               False]
-        self.get_button(text).center = (WIDTH // 2, HEIGHT // 2)
 
     def get_button(self, text):
         return self.buttons[text][0]
@@ -29,7 +32,10 @@ class MainMenu:
     def draw_main_menu(self):
         self.surface.fill(color_manager.colors['menu'].color_RGB)
 
-        for button in self.buttons:
+        for i, button in enumerate(self.buttons):
+            button_height = (self.gap + self.button_height // 2) + i * (self.gap + self.button_height)
+            self.get_button(button).center = (WIDTH // 2, button_height)
+
             pygame.draw.rect(
                 self.surface,
                 color_manager.colors['fruit'].color_RGB
