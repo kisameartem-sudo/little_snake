@@ -62,6 +62,11 @@ class MainMenu:
     def get_button(self, text):
         return self.buttons[text]
 
+    def get_button_clicked(self, mouse_pose):
+        for button in self.buttons:
+            if self.buttons[button].is_hovered(mouse_pose):
+                return button
+
     def draw_main_menu(self):
         self.surface.fill(color_manager.colors['menu'].color_RGB)
 

@@ -97,11 +97,14 @@ class Game:
             elif self.game_state == GameState.MAIN_MENU:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        if self.main_menu.get_button('START').is_hovered(event.pos):
-                            self.new_game_start()
-                            self.game_state = GameState.PLAYING
-                        if self.main_menu.get_button('EXIT').is_hovered(event.pos):
-                            self.running = False
+                        button_clicked = self.main_menu.get_button_clicked(event.pos)
+                        match button_clicked:
+                            case 'START':
+                                self.new_game_start()
+                                self.game_state = GameState.PLAYING
+                            case 'EXIT':
+                                self.running = False
+
     # -------------------------------------------------
     # Непрерывный ввод
     # -------------------------------------------------
