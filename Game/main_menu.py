@@ -23,7 +23,7 @@ class Button:
         self.button_rect.center = position
 
     def is_hovered(self, mouse_pos):
-        return True if self.button_rect.collidepoint(mouse_pos) else False
+        return self.button_rect.collidepoint(mouse_pos)
 
     def draw_button(self, menu_surface):
         pygame.draw.rect(
@@ -62,9 +62,9 @@ class MainMenu:
     def get_button(self, text):
         return self.buttons[text]
 
-    def get_button_clicked(self, mouse_pose):
+    def get_button_clicked(self, mouse_pos):
         for button in self.buttons:
-            if self.buttons[button].is_hovered(mouse_pose):
+            if self.buttons[button].is_hovered(mouse_pos):
                 return button
 
     def draw_main_menu(self):
