@@ -9,7 +9,7 @@ class Button:
         self.hovered = False
         self.button_rect = pygame.Rect(0, 0, self.width, self.height)
         self.base_color = color_manager.colors['snake_head'].color_RGB
-        self.active_color = color_manager.colors['fruit'].color_RGB
+        self.hovered_color = color_manager.colors['fruit'].color_RGB
 
         self.font = pygame.font.Font(None, 50)
 
@@ -23,17 +23,12 @@ class Button:
         self.button_rect.center = position
 
     def is_hovered(self, mouse_pos):
-        if self.button_rect.collidepoint(mouse_pos):
-            self.change_button_state(True)
-            return True
-        if not self.button_rect.collidepoint(mouse_pos):
-            self.change_button_state(False)
-            return False
+        return True if self.button_rect.collidepoint(mouse_pos) else False
 
     def draw_button(self, menu_surface):
         pygame.draw.rect(
             menu_surface,
-            self.active_color if self.get_state() else self.base_color,
+            self.hovered_color if self.get_state() else self.base_color,
             self.button_rect,
             border_radius=10
         )
@@ -66,9 +61,6 @@ class MainMenu:
 
     def get_button(self, text):
         return self.buttons[text]
-
-    def check_button(self, text):
-        return self.buttons[text].get_state()
 
     def draw_main_menu(self):
         self.surface.fill(color_manager.colors['menu'].color_RGB)
