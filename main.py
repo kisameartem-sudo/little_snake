@@ -94,25 +94,21 @@ class Game:
                     if event.key == pygame.K_ESCAPE:
                         self.game_state = GameState.MAIN_MENU
 
-            # elif self.game_state == GameState.MAIN_MENU:
-            #     if event.type == pygame.MOUSEBUTTONDOWN:
-            #         if event.button == 1:
-            #             if self.main_menu.get_button('START').collidepoint(event.pos):
-            #                 self.new_game_start()
-            #                 self.game_state = GameState.PLAYING
-            #             if self.main_menu.get_button('EXIT').collidepoint(event.pos):
-            #                 self.running = False
+            elif self.game_state == GameState.MAIN_MENU:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        if self.main_menu.get_button('START').is_hovered(event.pos):
+                            self.new_game_start()
+                            self.game_state = GameState.PLAYING
+                        if self.main_menu.get_button('EXIT').is_hovered(event.pos):
+                            self.running = False
     # -------------------------------------------------
     # Непрерывный ввод
     # -------------------------------------------------
     def handle_input(self):
         mouse_pos = pygame.mouse.get_pos()
         for button in self.main_menu.buttons:
-            button_rect = self.main_menu.get_button(button)
-            # if button_rect.collidepoint(mouse_pos):
-            #     self.main_menu.change_button_state(button, True)
-            # else:
-            #     self.main_menu.change_button_state(button, False)
+            self.main_menu.get_button(button).is_hovered(mouse_pos)
 
     # -------------------------------------------------
     # 3. Изменение состояния
