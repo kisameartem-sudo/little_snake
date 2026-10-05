@@ -8,6 +8,7 @@ class PauseMenu:
         self.surface = pygame.Surface(
             (PAUSE_MENU_WIDTH, PAUSE_MENU_HEIGHT),
             pygame.SRCALPHA)
+        self.coordinate_shift = (0, 0)
         self.title_font = pygame.font.Font(None, 50)
         self.font = pygame.font.Font(None, 30)
         self.center_x = PAUSE_MENU_WIDTH // 2
@@ -23,6 +24,9 @@ class PauseMenu:
         self.set_buttons_pos()
         self.draw_pause_menu()
 
+    def set_surface_shift(self, position):
+        self.coordinate_shift = position
+
     def new_button(self, text):
         self.buttons[text] = Button(self.button_width, self.button_height, text, 40)
 
@@ -36,14 +40,16 @@ class PauseMenu:
         return self.buttons[text]
 
     def get_button_clicked(self, mouse_pos):
+        shift_mouse_pos = (mouse_pos[0] - self.coordinate_shift[0], mouse_pos[1] - self.coordinate_shift[1])
         for button in self.buttons:
-            if self.buttons[button].is_hovered(mouse_pos):
+            if self.buttons[button].is_hovered(shift_mouse_pos):
                 return button
 
     def update_hover(self, mouse_pos):
+        shift_mouse_pos = (mouse_pos[0] - self.coordinate_shift[0], mouse_pos[1] - self.coordinate_shift[1])
         for button in self.buttons:
             self.buttons[button].change_button_state(
-                self.buttons[button].is_hovered(mouse_pos)
+                self.buttons[button].is_hovered(shift_mouse_pos)
             )
 
     def draw_pause_menu(self):

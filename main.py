@@ -30,6 +30,9 @@ class Game:
         self.g_o_alpha = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.g_o_alpha.fill((255, 0, 0, 100))
         self.pause_menu = PauseMenu()
+        self.pause_menu.set_surface_shift(
+            ((WIDTH - self.pause_menu.surface.get_width()) // 2,
+             (HEIGHT - self.pause_menu.surface.get_height()) // 2))
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
@@ -78,12 +81,15 @@ class Game:
                         self.snake.update_direction('DOWN')
 
             elif self.game_state == GameState.PAUSED:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:
-                        self.new_game_start()
-                        self.game_state = GameState.PLAYING
-                    if event.key == pygame.K_SPACE:
-                        self.game_state = GameState.PLAYING
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        button_clicked = self.pause_menu.get_button_clicked(event.pos)
+                        match button_clicked:
+                            case 'Continue':
+                                self.game_state = GameState.PLAYING
+                            case 'Restart':
+                                self.new_game_start()
+                                self.game_state = GameState.PLAYING
 
             elif self.game_state == GameState.GAME_OVER:
                 if event.type == pygame.KEYDOWN:
@@ -111,8 +117,6 @@ class Game:
         mouse_pos = pygame.mouse.get_pos()
         self.main_menu.update_hover(mouse_pos)
         self.pause_menu.update_hover(mouse_pos)
-
-
     # -------------------------------------------------
     # 3. Изменение состояния
     # -------------------------------------------------
@@ -171,11 +175,7 @@ class Game:
         elif self.game_state == GameState.PAUSED:
             self.draw_scene()
             self.pause_menu.draw_pause_menu()
-            self.screen.blit(self.pause_menu.surface,
-                             (
-                                 (WIDTH - self.pause_menu.surface.get_width()) // 2,
-                                 (HEIGHT - self.pause_menu.surface.get_height()) // 2)
-                             )
+            self.screen.blit(self.pause_menu.surface, self.pause_menu.coordinate_shift)
 
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
