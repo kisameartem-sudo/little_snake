@@ -1,5 +1,4 @@
 import pygame
-from colors import color_manager
 from snake.little_snake.Game.field import Field
 from snake.little_snake.Game.main_menu import MainMenu
 from snake.little_snake.Game.ui import UI
@@ -110,7 +109,8 @@ class Game:
     # -------------------------------------------------
     def handle_input(self):
         mouse_pos = pygame.mouse.get_pos()
-        self.main_menu.is_hovered_buttons(mouse_pos)
+        self.main_menu.update_hover(mouse_pos)
+        self.pause_menu.update_hover(mouse_pos)
 
 
     # -------------------------------------------------
@@ -170,6 +170,7 @@ class Game:
 
         elif self.game_state == GameState.PAUSED:
             self.draw_scene()
+            self.pause_menu.draw_pause_menu()
             self.screen.blit(self.pause_menu.surface,
                              (
                                  (WIDTH - self.pause_menu.surface.get_width()) // 2,
@@ -193,7 +194,7 @@ class Game:
                 dt = self.clock.tick(self.FPS) / 1000.0
                 self.handle_events()
 
-                if self.game_state == GameState.MAIN_MENU:
+                if self.game_state in (GameState.MAIN_MENU, GameState.PAUSED):
                     self.handle_input()
 
                 if self.game_state == GameState.PLAYING:
