@@ -110,9 +110,7 @@ class Game:
     # -------------------------------------------------
     def handle_input(self):
         mouse_pos = pygame.mouse.get_pos()
-        for button in self.main_menu.buttons:
-            hovered = self.main_menu.get_button(button).is_hovered(mouse_pos)
-            self.main_menu.get_button(button).change_button_state(hovered)
+        self.main_menu.is_hovered_buttons(mouse_pos)
 
 
     # -------------------------------------------------
