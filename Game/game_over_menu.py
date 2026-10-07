@@ -25,7 +25,6 @@ class GameOverMenu(BaseMenu):
         self.gap = 5
 
         """Кнопки"""
-        self.buttons = {}
         self.button_width = 120
         self.button_height = 40
         self.button_gap = 10
@@ -54,7 +53,6 @@ class GameOverMenu(BaseMenu):
     def draw_areas(self):
         self.surface.fill(color_manager.colors['menu'].color_RGB)
 
-        self.surface.fill(color_manager.colors['menu'].color_RGB)
         pygame.draw.rect(
             self.surface,
             color_manager.colors['fruit'].color_RGB,
