@@ -33,6 +33,9 @@ class Game:
         self.pause_menu.set_surface_shift(
             ((WIDTH - self.pause_menu.surface.get_width()) // 2,
              (HEIGHT - self.pause_menu.surface.get_height()) // 2))
+        self.game_over_menu.set_surface_shift((
+                                 (WIDTH - self.game_over_menu.surface.get_width()) // 2,
+                                 (HEIGHT - self.game_over_menu.surface.get_height()) // 2))
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
@@ -186,11 +189,7 @@ class Game:
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
             self.screen.blit(self.g_o_alpha, (0, 0))
-            self.screen.blit(self.game_over_menu.surface,
-                             (
-                                 (WIDTH - self.game_over_menu.surface.get_width()) // 2,
-                                 (HEIGHT - self.game_over_menu.surface.get_height()) // 2)
-                             )
+            self.screen.blit(self.game_over_menu.surface, self.game_over_menu.coordinate_shift)
 
         pygame.display.flip()
 
@@ -202,6 +201,7 @@ class Game:
 
                 if self.game_state in (GameState.MAIN_MENU, GameState.PAUSED, GameState.GAME_OVER):
                     self.handle_input()
+
 
                 if self.game_state == GameState.PLAYING:
                     self.update(dt)
