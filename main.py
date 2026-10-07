@@ -40,6 +40,7 @@ class Game:
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
 
+
     def new_game_start(self):
         self.ui = UI()
         self.snake = Snake(SNAKE_START_POS[0],
