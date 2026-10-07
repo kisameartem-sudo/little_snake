@@ -79,6 +79,8 @@ class Game:
                         self.snake.update_direction('LEFT')
                     if event.key == pygame.K_s:
                         self.snake.update_direction('DOWN')
+                    if event.key == pygame.K_o:
+                        self.game_state = GameState.GAME_OVER
 
             elif self.game_state == GameState.PAUSED:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -114,9 +116,13 @@ class Game:
     # Непрерывный ввод
     # -------------------------------------------------
     def handle_input(self):
-        mouse_pos = pygame.mouse.get_pos()
-        self.main_menu.update_hover(mouse_pos)
-        self.pause_menu.update_hover(mouse_pos)
+        if self.game_state == GameState.MAIN_MENU:
+            self.main_menu.update_hover(pygame.mouse.get_pos())
+        elif self.game_state == GameState.PAUSED:
+            self.pause_menu.update_hover(pygame.mouse.get_pos())
+        elif self.game_state == GameState.GAME_OVER:
+            self.game_over_menu.update_hover(pygame.mouse.get_pos())
+
     # -------------------------------------------------
     # 3. Изменение состояния
     # -------------------------------------------------
@@ -194,7 +200,7 @@ class Game:
                 dt = self.clock.tick(self.FPS) / 1000.0
                 self.handle_events()
 
-                if self.game_state in (GameState.MAIN_MENU, GameState.PAUSED):
+                if self.game_state in (GameState.MAIN_MENU, GameState.PAUSED, GameState.GAME_OVER):
                     self.handle_input()
 
                 if self.game_state == GameState.PLAYING:
