@@ -97,12 +97,17 @@ class Game:
                                 self.game_state = GameState.PLAYING
 
             elif self.game_state == GameState.GAME_OVER:
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_r:
-                        self.new_game_start()
-                        self.game_state = GameState.PLAYING
-                    if event.key == pygame.K_ESCAPE:
-                        self.game_state = GameState.MAIN_MENU
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        button_clicked = self.game_over_menu.get_button_clicked(event.pos)
+                        match button_clicked:
+                            case 'Main menu':
+                                self.game_state = GameState.MAIN_MENU
+                            case 'Restart':
+                                self.new_game_start()
+                                self.game_state = GameState.PLAYING
+                            case 'Exit':
+                                self.running = False
 
             elif self.game_state == GameState.MAIN_MENU:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -189,6 +194,7 @@ class Game:
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
             self.screen.blit(self.g_o_alpha, (0, 0))
+            self.game_over_menu.draw_game_over_menu()
             self.screen.blit(self.game_over_menu.surface, self.game_over_menu.coordinate_shift)
 
         pygame.display.flip()
