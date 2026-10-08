@@ -44,6 +44,9 @@ class Field:
         for fruit in fruits:
             self.draw_rect('fruit', fruit[0], fruit[1], 40)
 
+    def draw_coins(self, coins):
+        for coin in coins:
+            self.draw_rect('coin', coin[0], coin[1], 40)
 
     def draw_rect(self, color, x, y, bord):
         pygame.draw.rect(

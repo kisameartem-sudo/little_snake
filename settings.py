@@ -16,6 +16,10 @@ NUM_CELLS = 10
 MAX_NUM_FRUITS = 4
 DELAY_TO_NEW_FRUIT = 4
 
+# COINS---------------------------
+MAX_NUM_COINS = 2
+DELAY_TO_NEW_COIN = 30
+
 # SNAKE----------------------------
 SNAKE_START_POS = (1, 1)
 

@@ -6,6 +6,7 @@ from snake.little_snake.Game.game_over_menu import GameOverMenu
 from snake.little_snake.Game.pause_menu import PauseMenu
 from Entities.snake import Snake
 from snake.little_snake.Entities.fruit import Fruits
+from snake.little_snake.Entities.coin import Coins
 from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
 from enum import Enum
 
@@ -51,12 +52,16 @@ class Game:
             'move_timer': 0,
             'move_interval': 0.3
         }
-        # self.is_snake_live = True
         self.previous_snake = self.snake.get_snake()
         self.fruits = Fruits(set(self.snake.get_snake()))
+        self.coins = Coins(set(self.snake.get_snake()))
+
         self.eating_fruit = None
+        self.eating_coin = None
+
         self.score = 0
         self.live_timer = 0
+        self.collected_coins = 0
 
     # -------------------------------------------------
     # Обработка событий нажатия кнопок
@@ -148,9 +153,17 @@ class Game:
             snake_head = self.snake.next_head_pos()
             self.previous_snake = snake
 
+            excludes = set(self.snake.get_snake() + list(self.fruits.get_fruits()))
+
+            """Обработка фруктов"""
             if self.eating_fruit is not None:
-                self.fruits.remove_fruit(self.eating_fruit, set(self.snake.get_snake()))
+                self.fruits.remove_fruit(self.eating_fruit, excludes)
                 self.eating_fruit = None
+
+            """Обработка монет"""
+            if self.eating_coin is not None:
+                self.coins.remove_coin(self.eating_coin)
+                self.eating_coin = None
 
             if snake_head in self.fruits.get_fruits():
                 if snake_head in snake[1:]:
@@ -159,6 +172,13 @@ class Game:
                     self.snake.move(True)
                     self.eating_fruit = snake_head
                     self.score += 20
+
+            elif snake_head in self.coins.get_coins():
+                self.snake.move()
+                self.eating_coin = snake_head
+                self.collected_coins += 1
+                self.score += 100
+
             else:
                 if snake_head in snake[1:-1]:
                     self.game_state = GameState.GAME_OVER
@@ -166,8 +186,10 @@ class Game:
                     self.snake.move()
 
             if self.fruits.update_delay():
-                self.fruits.add_fruit(set(self.snake.get_snake()))
+                self.fruits.add_fruit(excludes)
 
+            if self.coins.update_delay():
+                self.coins.add_coin(excludes)
 
     # -------------------------------------------------
     # 4. Отрисовка
@@ -175,6 +197,7 @@ class Game:
     def draw_scene(self):
         self.field.draw_cells()  # Рисуем поле
         self.field.draw_fruits(self.fruits.get_fruits())
+        self.field.draw_coins(self.coins.get_coins())
 
         alpha = self.moving['move_timer'] / self.moving['move_interval']
         snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, NUM_CELLS)
@@ -199,7 +222,7 @@ class Game:
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
             self.screen.blit(self.g_o_alpha, (0, 0))
-            self.game_over_menu.draw_game_over_menu(score=self.score, live_time=self.formatted_timer(self.live_timer))
+            self.game_over_menu.draw_game_over_menu(self.score, self.collected_coins, self.formatted_timer(self.live_timer))
             self.screen.blit(self.game_over_menu.surface, self.game_over_menu.coordinate_shift)
 
         pygame.display.flip()

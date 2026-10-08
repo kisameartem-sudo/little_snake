@@ -80,7 +80,7 @@ class GameOverMenu(BaseMenu):
             width=2
         )
 
-    def draw_stats(self, score, coins=0, live_time=0):
+    def draw_stats(self, score, coins, live_time):
         sub_title = self.stats_font.render('Stats...:', True, "black")
         sub_title_rect = sub_title.get_rect(topleft=(self.stats_area.left + self.gap_info, self.stats_area.top + self.gap_info))
         self.surface.blit(sub_title, sub_title_rect)
