@@ -80,12 +80,12 @@ class GameOverMenu(BaseMenu):
             width=2
         )
 
-    def draw_stats(self, scores=0, coins=0, live_time=0):
+    def draw_stats(self, score, coins=0, live_time=0):
         sub_title = self.stats_font.render('Stats...:', True, "black")
         sub_title_rect = sub_title.get_rect(topleft=(self.stats_area.left + self.gap_info, self.stats_area.top + self.gap_info))
         self.surface.blit(sub_title, sub_title_rect)
 
-        scores_title = self.stats_font.render(f'Набрано очков: {scores}', True, "black")
+        scores_title = self.stats_font.render(f'Набрано очков: {score}', True, "black")
         coins_title = self.stats_font.render(f'Собрано монет: {coins}', True, "black")
         live_time_title = self.stats_font.render(f'Время жизни: {live_time}', True, "black")
 
@@ -97,7 +97,7 @@ class GameOverMenu(BaseMenu):
         self.surface.blit(coins_title, coins_title_rect)
         self.surface.blit(live_time_title, live_time_title_rect)
 
-    def draw_game_over_menu(self, scores=0, coins=0, live_time=0):
+    def draw_game_over_menu(self, score, coins=0, live_time=0):
         self.draw_areas()
 
         title = self.title_font.render("GAME OVER", True, "black")
@@ -105,7 +105,7 @@ class GameOverMenu(BaseMenu):
         title_rect = title.get_rect(center=self.title_area.center)
         self.surface.blit(title, title_rect)
 
-        self.draw_stats(scores, coins, live_time)
+        self.draw_stats(score, coins, live_time)
 
         for button in self.buttons:
             self.buttons[button].draw_button(self.surface)

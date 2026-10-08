@@ -49,14 +49,14 @@ class Game:
 
         self.moving = {
             'move_timer': 0,
-            'move_interval': 0.3,
-            'game_timer': 0
+            'move_interval': 0.3
         }
         # self.is_snake_live = True
         self.previous_snake = self.snake.get_snake()
         self.fruits = Fruits(set(self.snake.get_snake()))
         self.eating_fruit = None
-        self.scores = 0
+        self.score = 0
+        self.live_timer = 0
 
     # -------------------------------------------------
     # Обработка событий нажатия кнопок
@@ -139,7 +139,7 @@ class Game:
     # -------------------------------------------------
     def update(self, dt):
         self.moving['move_timer'] += dt
-        self.moving['game_timer'] += dt
+        self.live_timer += dt
 
         if self.moving['move_timer'] >= self.moving['move_interval']:
             self.moving['move_timer'] -= self.moving['move_interval']
@@ -158,7 +158,7 @@ class Game:
                 else:
                     self.snake.move(True)
                     self.eating_fruit = snake_head
-                    self.scores += 20
+                    self.score += 20
             else:
                 if snake_head in snake[1:-1]:
                     self.game_state = GameState.GAME_OVER
@@ -199,7 +199,7 @@ class Game:
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
             self.screen.blit(self.g_o_alpha, (0, 0))
-            self.game_over_menu.draw_game_over_menu(scores=self.scores, live_time=round(self.moving['game_timer']))
+            self.game_over_menu.draw_game_over_menu(score=self.score, live_time=self.formatted_timer(self.live_timer))
             self.screen.blit(self.game_over_menu.surface, self.game_over_menu.coordinate_shift)
 
         pygame.display.flip()
@@ -220,6 +220,13 @@ class Game:
 
         finally:
             pygame.quit()
+
+    @staticmethod
+    def formatted_timer(cur_time):
+        seconds = int(cur_time)
+        minutes = seconds // 60
+        seconds = seconds % 60
+        return f'{minutes:02d}:{seconds:02d}'
 
     @staticmethod
     def wrapped_delta(old, new, field_size):
