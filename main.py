@@ -49,7 +49,8 @@ class Game:
 
         self.moving = {
             'move_timer': 0,
-            'move_interval': 0.3
+            'move_interval': 0.3,
+            'game_timer': 0
         }
         # self.is_snake_live = True
         self.previous_snake = self.snake.get_snake()
@@ -138,6 +139,7 @@ class Game:
     # -------------------------------------------------
     def update(self, dt):
         self.moving['move_timer'] += dt
+        self.moving['game_timer'] += dt
 
         if self.moving['move_timer'] >= self.moving['move_interval']:
             self.moving['move_timer'] -= self.moving['move_interval']
@@ -148,7 +150,6 @@ class Game:
 
             if self.eating_fruit is not None:
                 self.fruits.remove_fruit(self.eating_fruit, set(self.snake.get_snake()))
-                self.scores += 20
                 self.eating_fruit = None
 
             if snake_head in self.fruits.get_fruits():
@@ -157,6 +158,7 @@ class Game:
                 else:
                     self.snake.move(True)
                     self.eating_fruit = snake_head
+                    self.scores += 20
             else:
                 if snake_head in snake[1:-1]:
                     self.game_state = GameState.GAME_OVER
@@ -197,7 +199,7 @@ class Game:
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
             self.screen.blit(self.g_o_alpha, (0, 0))
-            self.game_over_menu.draw_game_over_menu(scores=self.scores)
+            self.game_over_menu.draw_game_over_menu(scores=self.scores, live_time=round(self.moving['game_timer']))
             self.screen.blit(self.game_over_menu.surface, self.game_over_menu.coordinate_shift)
 
         pygame.display.flip()
@@ -211,9 +213,9 @@ class Game:
                 if self.game_state in (GameState.MAIN_MENU, GameState.PAUSED, GameState.GAME_OVER):
                     self.handle_input()
 
-
                 if self.game_state == GameState.PLAYING:
                     self.update(dt)
+
                 self.render()
 
         finally:
