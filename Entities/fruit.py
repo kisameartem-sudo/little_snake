@@ -11,11 +11,12 @@ class Fruits:
     def update_delay(self):
         self.delay_to_add_fruit -= 1
         if self.delay_to_add_fruit == 0:
-            self.delay_to_add_fruit = 4
+            self.delay_to_add_fruit = DELAY_TO_NEW_FRUIT
             return True
 
     def add_fruit(self, excluded: set):
         if len(self.fruits) == MAX_NUM_FRUITS:
+            self.delay_to_add_fruit = DELAY_TO_NEW_FRUIT
             return
 
         while True:

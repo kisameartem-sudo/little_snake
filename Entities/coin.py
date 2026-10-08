@@ -16,6 +16,7 @@ class Coins:
 
     def add_coin(self, excluded: set):
         if len(self.coins) == MAX_NUM_COINS:
+            self.delay_to_add_coin = DELAY_TO_NEW_COIN
             return
 
         while True:

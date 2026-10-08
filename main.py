@@ -1,4 +1,5 @@
 import pygame
+from snake.little_snake.save_manager import SaveManager
 from snake.little_snake.Game.field import Field
 from snake.little_snake.Game.main_menu import MainMenu
 from snake.little_snake.Game.ui import UI
@@ -28,6 +29,7 @@ class Game:
         self.field = Field()
         self.main_menu = MainMenu()
         self.game_over_menu = GameOverMenu()
+        self.user_manager = SaveManager()
         self.g_o_alpha = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
         self.g_o_alpha.fill((255, 0, 0, 100))
         self.pause_menu = PauseMenu()
@@ -40,6 +42,8 @@ class Game:
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
+
+        self.total_coins, self.high_scores = self.user_manager.get_user_data()
 
 
     def new_game_start(self):
@@ -54,7 +58,7 @@ class Game:
         }
         self.previous_snake = self.snake.get_snake()
         self.fruits = Fruits(set(self.snake.get_snake()))
-        self.coins = Coins(set(self.snake.get_snake()))
+        self.coins = Coins(set(self.snake.get_snake() + list(self.fruits.get_fruits())))
 
         self.eating_fruit = None
         self.eating_coin = None
@@ -153,15 +157,9 @@ class Game:
             snake_head = self.snake.next_head_pos()
             self.previous_snake = snake
 
-            excludes = set(
-                self.snake.get_snake() +
-                list(self.fruits.get_fruits()) +
-                list(self.coins.get_coins())
-            )
-
             """Обработка фруктов"""
             if self.eating_fruit is not None:
-                self.fruits.remove_fruit(self.eating_fruit, excludes)
+                self.fruits.remove_fruit(self.eating_fruit, self.get_excludes())
                 self.eating_fruit = None
 
             """Обработка монет"""
@@ -171,6 +169,7 @@ class Game:
 
             if snake_head in self.fruits.get_fruits():
                 if snake_head in snake[1:]:
+                    self.user_manager.update_user_data(self.collected_coins, self.score)
                     self.game_state = GameState.GAME_OVER
                 else:
                     self.snake.move(True)
@@ -185,15 +184,16 @@ class Game:
 
             else:
                 if snake_head in snake[1:-1]:
+                    self.user_manager.update_user_data(self.collected_coins, self.score)
                     self.game_state = GameState.GAME_OVER
                 else:
                     self.snake.move()
 
             if self.fruits.update_delay():
-                self.fruits.add_fruit(excludes)
+                self.fruits.add_fruit(self.get_excludes())
 
             if self.coins.update_delay():
-                self.coins.add_coin(excludes)
+                self.coins.add_coin(self.get_excludes())
 
     # -------------------------------------------------
     # 4. Отрисовка
@@ -209,6 +209,13 @@ class Game:
         self.field.draw_snake(snake_to_draw)
         self.screen.blit(self.ui.surface, (0, 0))
         self.screen.blit(self.field.surface, (WIDTH - HEIGHT, 0))  # Отображаем поле
+
+    def get_excludes(self):
+        return set(
+                self.snake.get_snake() +
+                list(self.fruits.get_fruits()) +
+                list(self.coins.get_coins())
+            )
 
     def render(self):
         if self.game_state == GameState.PLAYING:
@@ -246,6 +253,7 @@ class Game:
                 self.render()
 
         finally:
+            self.user_manager.save_user_data()
             pygame.quit()
 
     @staticmethod
