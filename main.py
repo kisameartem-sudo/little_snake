@@ -153,7 +153,11 @@ class Game:
             snake_head = self.snake.next_head_pos()
             self.previous_snake = snake
 
-            excludes = set(self.snake.get_snake() + list(self.fruits.get_fruits()))
+            excludes = set(
+                self.snake.get_snake() +
+                list(self.fruits.get_fruits()) +
+                list(self.coins.get_coins())
+            )
 
             """Обработка фруктов"""
             if self.eating_fruit is not None:

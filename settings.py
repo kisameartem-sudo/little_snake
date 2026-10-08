@@ -14,7 +14,7 @@ NUM_CELLS = 10
 
 # FRUITS---------------------------
 MAX_NUM_FRUITS = 4
-DELAY_TO_NEW_FRUIT = 4
+DELAY_TO_NEW_FRUIT = 20
 
 # COINS---------------------------
 MAX_NUM_COINS = 2

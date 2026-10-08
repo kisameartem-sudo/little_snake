@@ -6,7 +6,7 @@ class Fruits:
         self.max_cell = NUM_CELLS - 1
         self.fruits = set()
         self.add_fruit(excluded)
-        self.delay_to_add_fruit = MAX_NUM_FRUITS
+        self.delay_to_add_fruit = DELAY_TO_NEW_FRUIT
 
     def update_delay(self):
         self.delay_to_add_fruit -= 1
@@ -17,8 +17,6 @@ class Fruits:
     def add_fruit(self, excluded: set):
         if len(self.fruits) == MAX_NUM_FRUITS:
             return
-
-        excluded.update(self.fruits)
 
         while True:
             fruit_cell = (randint(0, self.max_cell), randint(0, self.max_cell))

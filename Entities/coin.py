@@ -18,8 +18,6 @@ class Coins:
         if len(self.coins) == MAX_NUM_COINS:
             return
 
-        excluded.update(self.coins)
-
         while True:
             coin_cell = (randint(0, self.max_cell), randint(0, self.max_cell))
 
