@@ -55,6 +55,7 @@ class Game:
         self.previous_snake = self.snake.get_snake()
         self.fruits = Fruits(set(self.snake.get_snake()))
         self.eating_fruit = None
+        self.scores = 0
 
     # -------------------------------------------------
     # Обработка событий нажатия кнопок
@@ -147,6 +148,7 @@ class Game:
 
             if self.eating_fruit is not None:
                 self.fruits.remove_fruit(self.eating_fruit, set(self.snake.get_snake()))
+                self.scores += 20
                 self.eating_fruit = None
 
             if snake_head in self.fruits.get_fruits():
@@ -195,7 +197,7 @@ class Game:
         elif self.game_state == GameState.GAME_OVER:
             self.draw_scene()
             self.screen.blit(self.g_o_alpha, (0, 0))
-            self.game_over_menu.draw_game_over_menu()
+            self.game_over_menu.draw_game_over_menu(scores=self.scores)
             self.screen.blit(self.game_over_menu.surface, self.game_over_menu.coordinate_shift)
 
         pygame.display.flip()
