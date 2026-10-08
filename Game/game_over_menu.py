@@ -82,16 +82,16 @@ class GameOverMenu(BaseMenu):
 
     def draw_stats(self, scores=0, coins=0, live_time=0):
         sub_title = self.stats_font.render('Stats...:', True, "black")
-        sub_title_rect = sub_title.get_rect(topleft=(self.gap_info, self.stats_area.top + self.gap_info))
+        sub_title_rect = sub_title.get_rect(topleft=(self.stats_area.left + self.gap_info, self.stats_area.top + self.gap_info))
         self.surface.blit(sub_title, sub_title_rect)
 
         scores_title = self.stats_font.render(f'Набрано очков: {scores}', True, "black")
         coins_title = self.stats_font.render(f'Собрано монет: {coins}', True, "black")
         live_time_title = self.stats_font.render(f'Время жизни: {live_time}', True, "black")
 
-        scores_title_rect = scores_title.get_rect(topleft=(self.gap_info, sub_title_rect.bottom + self.stats_gap))
-        coins_title_rect = coins_title.get_rect(topleft=(self.gap_info, scores_title_rect.bottom + self.stats_gap))
-        live_time_title_rect = live_time_title.get_rect(topleft=(self.gap_info, coins_title_rect.bottom + self.stats_gap))
+        scores_title_rect = scores_title.get_rect(topleft=(self.stats_area.left + self.gap_info, sub_title_rect.bottom + self.stats_gap))
+        coins_title_rect = coins_title.get_rect(topleft=(self.stats_area.left + self.gap_info, scores_title_rect.bottom + self.stats_gap))
+        live_time_title_rect = live_time_title.get_rect(topleft=(self.stats_area.left + self.gap_info, coins_title_rect.bottom + self.stats_gap))
 
         self.surface.blit(scores_title, scores_title_rect)
         self.surface.blit(coins_title, coins_title_rect)
