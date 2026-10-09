@@ -5,8 +5,9 @@ from snake.little_snake.colors import color_manager
 class UI:
     def __init__(self):
         self.surface = pygame.Surface((WIDTH - HEIGHT, HEIGHT))
-        self.texts = [] # пока заглушка
         self.draw_ui()
+
+        self.title_font = pygame.font
 
 
 

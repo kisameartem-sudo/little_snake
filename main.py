@@ -43,9 +43,6 @@ class Game:
         pygame.display.set_caption('My_Snake')
         self.clock = pygame.time.Clock()
 
-        self.total_coins, self.high_scores = self.user_manager.get_user_data()
-
-
     def new_game_start(self):
         self.ui = UI()
         self.snake = Snake(SNAKE_START_POS[0],
