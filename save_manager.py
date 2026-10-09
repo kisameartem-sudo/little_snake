@@ -1,9 +1,11 @@
 import json
 import os
+from snake.little_snake.settings import USER_DATA
+
 
 class SaveManager:
     def __init__(self):
-        self.file = 'player_data.json'
+        self.file = USER_DATA
         self.total_coins = None
         self.high_scores = None
 
@@ -15,13 +17,13 @@ class SaveManager:
             self.high_scores = 0
             self.save_user_data()
 
-        with open("player_data.json", "r", encoding="utf-8") as f:
+        with open(self.file, "r", encoding="utf-8") as f:
             data = json.load(f)
             self.total_coins = data['total_coins']
             self.high_scores = data['high_scores']
 
     def update_user_data(self, coins, high_score):
-        self.total_coins = coins
+        self.total_coins += coins
         self.high_scores = high_score if high_score > self.high_scores else self.high_scores
 
     def get_user_data(self):
