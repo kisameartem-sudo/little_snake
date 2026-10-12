@@ -92,7 +92,7 @@ class Game:
                     if event.key == pygame.K_s:
                         self.snake.update_direction('DOWN')
                     if event.key == pygame.K_o:
-                        self.game_state = GameState.GAME_OVER
+                        self.finish_game()
 
             elif self.game_state == GameState.PAUSED:
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -166,7 +166,8 @@ class Game:
 
             if snake_head in self.fruits.get_fruits():
                 if snake_head in snake[1:]:
-                    self,finish_game()
+                    self.finish_game()
+                    return
                 else:
                     self.snake.move(True)
                     self.eating_fruit = snake_head
@@ -181,6 +182,7 @@ class Game:
             else:
                 if snake_head in snake[1:-1]:
                     self.finish_game()
+                    return
                 else:
                     self.snake.move()
 

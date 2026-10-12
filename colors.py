@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 @dataclass
-class ColorSchema:
+class ColorInfo:
     name: str
     color_RGB: tuple[int, int, int]
 
@@ -10,7 +10,10 @@ class ColorManager:
         self.colors = {}
 
     def add_color(self, assignment: str, name: str, rgb: tuple[int, int, int]):
-        self.colors[assignment] = ColorSchema(name, rgb)
+        self.colors[assignment] = ColorInfo(name, rgb)
+
+    def get_color(self, assignment: str):
+        return self.colors[assignment].color_RGB
 
 color_manager = ColorManager()
 
@@ -22,6 +25,23 @@ color_manager.add_color('background', 'Мягкий айвори', (232, 230, 22
 color_manager.add_color('fruit', 'Винно-красный', (102, 11, 18))
 color_manager.add_color('menu', 'Песочно-бежевый', (193, 163, 127))
 color_manager.add_color('coin', 'Золотистый', (240, 227, 0))
+
+Игровой мир:
+field_background
+grid_border
+
+Интерфейс:
+menu_background
+menu_border
+button_default
+button_hover
+text_primary
+
+Сущности:
+snake_head
+snake_body
+fruit
+coin
 
 
 # ('', 'Глубокий бирюзовый', (27, 80, 86))
