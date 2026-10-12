@@ -26,7 +26,7 @@ class MainMenu(BaseMenu):
             self.get_button(button).set_center((WIDTH // 2, button_height))
 
     def draw_main_menu(self):
-        self.surface.fill(color_manager.colors['menu'].color_RGB)
+        self.surface.fill(color_manager.get_color('menu_background'))
 
         for button in self.buttons:
             self.buttons[button].draw_button(self.surface)

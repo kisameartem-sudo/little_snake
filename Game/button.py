@@ -7,8 +7,8 @@ class Button:
         self.text = text
         self.hovered = False
         self.button_rect = pygame.Rect(0, 0, self.width, self.height)
-        self.base_color = color_manager.colors['snake_head'].color_RGB
-        self.hovered_color = color_manager.colors['fruit'].color_RGB
+        self.base_color = color_manager.get_color('button_default')
+        self.hovered_color = color_manager.get_color('button_hover')
 
         self.font = pygame.font.Font(None, font_size)
 
@@ -32,6 +32,6 @@ class Button:
             border_radius=10
         )
 
-        title = self.font.render(self.text, True, "black")
+        title = self.font.render(self.text, True, color_manager.get_color('text_primary'))
         title_rect = title.get_rect(center=self.button_rect.center)
         menu_surface.blit(title, title_rect)

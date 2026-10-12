@@ -22,12 +22,12 @@ class Field:
             for cell in self.cells[col]:
                 pygame.draw.rect(
                     self.surface,
-                    color_manager.colors['background'].color_RGB,
+                    color_manager.get_color('field_background'),
                     cell,)
 
                 pygame.draw.rect(
                     self.surface,
-                    color_manager.colors['cells_bord'].color_RGB,
+                    color_manager.get_color('grid_border'),
                     cell,
                     width=2,
                 )
@@ -38,11 +38,11 @@ class Field:
 
         if len(cur_snake) > 1:
             for seg in cur_snake[1:]:
-                self.draw_rect('snake_segment', seg[0], seg[1], 5)
+                self.draw_rect('snake_body', seg[0], seg[1], 5)
 
     def draw_fruits(self, fruits):
         for fruit in fruits:
-            self.draw_rect('fruit', fruit[0], fruit[1], 40)
+            self.draw_rect('fruit_1', fruit[0], fruit[1], 40)
 
     def draw_coins(self, coins):
         for coin in coins:
@@ -51,7 +51,7 @@ class Field:
     def draw_rect(self, color, x, y, bord):
         pygame.draw.rect(
             self.surface,
-            color_manager.colors[color].color_RGB,
+            color_manager.get_color(color),
             (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
             border_radius=bord
         )
@@ -67,7 +67,7 @@ class Field:
     def draw_part(self, color, x, y, bord):
         pygame.draw.rect(
             self.surface,
-            color_manager.colors[color].color_RGB,
+            color_manager.get_color(color),
             (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
             border_radius=bord
         )

@@ -32,15 +32,15 @@ class PauseMenu(BaseMenu):
             self.get_button(button).set_center((button_width, 120))
 
     def draw_pause_menu(self):
-        self.surface.fill(color_manager.colors['menu'].color_RGB + (100,))
+        self.surface.fill(color_manager.get_color('menu_background') + (100,))
         pygame.draw.rect(
             self.surface,
-            color_manager.colors['fruit'].color_RGB,
+            color_manager.get_color('menu_border'),
             pygame.Rect(0, 0, PAUSE_MENU_WIDTH, PAUSE_MENU_HEIGHT),
             width=4
         )
 
-        title = self.title_font.render("PAUSE", True, "black")
+        title = self.title_font.render("PAUSE", True, color_manager.get_color('text_primary'))
         total_height = (title.get_height() + 100)
         y = (PAUSE_MENU_HEIGHT - total_height) // 2
         title_rect = title.get_rect(midtop=(self.center_x, y))

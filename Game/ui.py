@@ -12,4 +12,4 @@ class UI:
 
 
     def draw_ui(self):
-        self.surface.fill(color_manager.colors['background'].color_RGB)
+        self.surface.fill(color_manager.get_color('menu_background'))
