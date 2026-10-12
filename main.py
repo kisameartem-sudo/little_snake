@@ -166,8 +166,7 @@ class Game:
 
             if snake_head in self.fruits.get_fruits():
                 if snake_head in snake[1:]:
-                    self.user_manager.update_user_data(self.collected_coins, self.score)
-                    self.game_state = GameState.GAME_OVER
+                    self,finish_game()
                 else:
                     self.snake.move(True)
                     self.eating_fruit = snake_head
@@ -181,8 +180,7 @@ class Game:
 
             else:
                 if snake_head in snake[1:-1]:
-                    self.user_manager.update_user_data(self.collected_coins, self.score)
-                    self.game_state = GameState.GAME_OVER
+                    self.finish_game()
                 else:
                     self.snake.move()
 
@@ -252,6 +250,10 @@ class Game:
         finally:
             self.user_manager.save_user_data()
             pygame.quit()
+
+    def finish_game(self):
+        self.user_manager.update_user_data(self.collected_coins, self.score)
+        self.game_state = GameState.GAME_OVER
 
     @staticmethod
     def formatted_timer(cur_time):
