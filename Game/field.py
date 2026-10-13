@@ -61,8 +61,8 @@ class Field:
         return cur_state
 
     def draw_snake_body(self, body):
-        for i, seg in enumerate(body[1:]):
-            state = self.get_state(body[i], seg, body[i+1])
+        for i, seg in enumerate(body[1:-1]):
+            state = self.get_state(body[i], seg, body[i+2])
             self.draw_rect(state, 'snake_body', seg[0], seg[1], 5)
 
     def draw_rect(self, state, color, x, y, bord):
