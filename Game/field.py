@@ -47,35 +47,44 @@ class Field:
     def draw_snake_tail(self, snake):
         if len(snake) > 2:
             self.draw_snake_body(snake)
-        tail = snake.pop()
+        tail = snake[-1]
         self.draw_square('snake_body', tail[0], tail[1], 5)
 
     @staticmethod
-    def get_position(seg_prev, seg_cur):
-        if seg_prev[0] == seg_cur[0]:
-            position = 'hor'
-        else:# seg_prev[1] == seg_cur[1]:
-            position = 'vert'
-        return position
+    def get_state(seg_prev, seg_cur, seg_next):
+        prev_state = 'vert' if seg_prev[0] == seg_cur[0] else 'hor'
+        next_state = 'vert' if seg_next[0] == seg_cur[0] else 'hor'
+        if prev_state == next_state:
+            cur_state = prev_state
+        else:
+            cur_state = 'corner'
+        return cur_state
 
     def draw_snake_body(self, body):
         for i, seg in enumerate(body[1:]):
-            position = self.get_position(body[i], seg)
-            self.draw_rect(position, 'snake_body', seg[0], seg[1], 5)
+            state = self.get_state(body[i], seg, body[i+1])
+            self.draw_rect(state, 'snake_body', seg[0], seg[1], 5)
 
-    def draw_rect(self, position, color, x, y, bord):
-        if position == 'hor':
-            rect_to_draw = (
-                x * self.cell_size + self.body_offset,
-                y * self.cell_size,
-                self.snake_body_size,
-                self.cell_size)
-        else:
-            rect_to_draw = (
-                x * self.cell_size,
-                y * self.cell_size + self.body_offset,
-                self.cell_size,
-                self.snake_body_size)
+    def draw_rect(self, state, color, x, y, bord):
+        match state:
+            case 'vert':
+                rect_to_draw = (
+                    x * self.cell_size + self.body_offset,
+                    y * self.cell_size,
+                    self.snake_body_size,
+                    self.cell_size)
+            case 'hor':
+                rect_to_draw = (
+                    x * self.cell_size,
+                    y * self.cell_size + self.body_offset,
+                    self.cell_size,
+                    self.snake_body_size)
+            case 'corner':
+                rect_to_draw = (
+                    x * self.cell_size,
+                    y * self.cell_size,
+                    self.cell_size,
+                    self.cell_size)
         pygame.draw.rect(
             self.surface,
             color_manager.get_color(color),
