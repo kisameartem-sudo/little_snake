@@ -5,6 +5,19 @@ class ColorInfo:
     name: str
     color_RGB: tuple[int, int, int]
 
+@dataclass
+class ColorTheme:
+    field_background: str
+    grid_border: str
+
+    menu_background: str
+    menu_border: str
+
+    button_default: str
+    button_hover: str
+
+    text_primary: str
+
 class ColorManager:
     def __init__(self):
         self.colors = {}
@@ -35,7 +48,6 @@ color_manager.add_color('fruit_1', 'Винно-красный', (102, 11, 18))
 color_manager.add_color('fruit_2', 'Тёмный бордовый', (68, 23, 26))
 color_manager.add_color('fruit_3', 'Тёмный бордовый', (61, 1, 13))
 color_manager.add_color('coin', 'Золотистый', (181, 177, 67))
-
 
 """Неиспользуемое"""
 # color_manager.add_color('dusty_turquoise', 'Припылённая бирюза', (48, 143, 149))
