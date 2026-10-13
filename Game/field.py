@@ -1,5 +1,4 @@
 import pygame
-from PIL.ImageChops import offset
 
 from snake.little_snake.settings import HEIGHT, NUM_CELLS
 from snake.little_snake.colors import color_manager
@@ -11,6 +10,7 @@ class Field:
         self.cell_size = HEIGHT // self.num_cells
         self.snake_body_size = int(self.cell_size * 0.7)
         self.body_offset = (self.cell_size - self.snake_body_size) // 2
+        self.snake_direction = None
         self.cells = []
         self._create_field()
 
@@ -35,30 +35,47 @@ class Field:
                     width=2,
                 )
 
-    def draw_snake(self, snake):
+    def draw_snake(self, snake, direction):
+        self.snake_direction = direction
         cur_snake = snake
         """Рисуем голову"""
         self.draw_square('snake_head', cur_snake[0][0], cur_snake[0][1], 10)
 
         if len(cur_snake) > 1:
-            self.draw_snake_tail(cur_snake[1:])
+            self.draw_snake_tail(cur_snake)
 
-    def draw_snake_tail(self, tail):
-        if len(tail) > 1:
-            self.draw_snake_body(tail[:-1])
-        tail = tail.pop()
+    def draw_snake_tail(self, snake):
+        if len(snake) > 2:
+            self.draw_snake_body(snake)
+        tail = snake.pop()
         self.draw_square('snake_body', tail[0], tail[1], 5)
 
-    def draw_snake_body(self, body):
-        for seg in body:
-            self.draw_rect('snake_body', seg[0], seg[1], 5)
+    @staticmethod
+    def get_position(seg_prev, seg_cur):
+        if seg_prev[0] == seg_cur[0]:
+            position = 'hor'
+        else:# seg_prev[1] == seg_cur[1]:
+            position = 'vert'
+        return position
 
-    def draw_rect(self, color, x, y, bord):
-        rect_to_draw = (
-            x * self.cell_size + self.body_offset,
-            y * self.cell_size,
-            self.snake_body_size,
-            self.cell_size)
+    def draw_snake_body(self, body):
+        for i, seg in enumerate(body[1:]):
+            position = self.get_position(body[i], seg)
+            self.draw_rect(position, 'snake_body', seg[0], seg[1], 5)
+
+    def draw_rect(self, position, color, x, y, bord):
+        if position == 'hor':
+            rect_to_draw = (
+                x * self.cell_size + self.body_offset,
+                y * self.cell_size,
+                self.snake_body_size,
+                self.cell_size)
+        else:
+            rect_to_draw = (
+                x * self.cell_size,
+                y * self.cell_size + self.body_offset,
+                self.cell_size,
+                self.snake_body_size)
         pygame.draw.rect(
             self.surface,
             color_manager.get_color(color),

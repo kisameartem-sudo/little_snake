@@ -38,5 +38,8 @@ class Snake:
         if not with_grow:
             self.snake.pop()
 
+    def get_dirrection(self):
+        return self.direction
+
     def get_snake(self):
         return list(self.snake)
