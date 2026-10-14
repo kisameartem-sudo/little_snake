@@ -57,8 +57,18 @@ class Field:
         if prev_state == next_state:
             cur_state = prev_state
         else:
+            prev_state = Field.get_side(seg_cur, seg_prev)
+            next_state = Field.get_side(seg_cur, seg_next)
+            print(prev_state+next_state)
             cur_state = 'corner'
         return cur_state
+
+    @staticmethod
+    def get_side(cur, neighbour):
+        if cur[0] == neighbour[0]:
+            return 'UP' if cur[1] - neighbour[1] == 1 else 'DOWN'
+        else:
+            return 'LEFT' if cur[0] - neighbour[0] == 1 else 'RIGHT'
 
     def draw_snake_body(self, visual_snake, logical_snake):
         for i, seg in enumerate(visual_snake[1:-1]):
