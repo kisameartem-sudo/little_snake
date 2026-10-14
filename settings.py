@@ -20,7 +20,7 @@ DELAY_TO_NEW_FRUIT = 20
 MAX_NUM_COINS = 2
 DELAY_TO_NEW_COIN = 100
 
-# SNAKE----------------------------
+# SNAKE---------------------ы-------
 SNAKE_START_POS = (1, 1)
 
 # SAVE_MANAGER----------------------------
