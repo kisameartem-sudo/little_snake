@@ -35,9 +35,9 @@ class Field:
                     width=2,
                 )
 
-    def draw_snake(self, snake, virtual_snake, direction):
+    def draw_snake(self, visual_snake, logical_snake, direction):
         self.snake_direction = direction
-        cur_snake = snake
+        cur_snake = visual_snake
         """Рисуем голову"""
         self.draw_square('snake_head', cur_snake[0][0], cur_snake[0][1], 10)
 
@@ -45,7 +45,7 @@ class Field:
             self.draw_snake_tail(cur_snake)
         elif len(cur_snake) > 2:
             self.draw_snake_tail(cur_snake)
-            self.draw_snake_body(snake, virtual_snake)
+            self.draw_snake_body(visual_snake, logical_snake)
 
     def draw_snake_tail(self, snake):
         self.draw_square('snake_body', snake[-1][0], snake[-1][1], 5)
@@ -60,9 +60,9 @@ class Field:
             cur_state = 'corner'
         return cur_state
 
-    def draw_snake_body(self, body, virtual_snake):
-        for i, seg in enumerate(body[1:-1]):
-            state = self.get_state(virtual_snake[i], seg, virtual_snake[i+2])
+    def draw_snake_body(self, visual_snake, logical_snake):
+        for i, seg in enumerate(visual_snake[1:-1]):
+            state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
             self.draw_rect(state, 'snake_body', seg[0], seg[1], 5)
 
     def draw_rect(self, state, color, x, y, bord):
