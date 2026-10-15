@@ -22,13 +22,14 @@ DELAY_TO_NEW_COIN = 100
 
 # SNAKE---------------------ы-------
 SNAKE_START_POS = (1, 1)
+MOVE_SPEED = 0.3
 
 # SAVE_MANAGER----------------------------
 USER_DATA = 'player_data.json'
 
-class KEYBOARD_KEYS(Enum):
-    UP = 'UP'
-    DOWN = 'DOWN'
-    LEFT = 'LEFT'
-    RIGHT = 'RIGHT'
+# class KEYBOARD_KEYS(Enum):
+#     UP = 'UP'
+#     DOWN = 'DOWN'
+#     LEFT = 'LEFT'
+#     RIGHT = 'RIGHT'
 

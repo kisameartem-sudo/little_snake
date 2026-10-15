@@ -46,10 +46,10 @@ class Field:
 
         if len(cur_snake) == 2:
             """Рисуем хвост"""
-            self.draw_square('snake_body', cur_snake[-1][0], cur_snake[-1][1], 5)
+            self.draw_tail(cur_snake[-1], logical_snake, 'snake_body')
         elif len(cur_snake) > 2:
             """Рисуем хвост"""
-            self.draw_square('snake_body', cur_snake[-1][0], cur_snake[-1][1], 5)
+            self.draw_tail(cur_snake[-1], logical_snake, 'snake_body')
             """Готовим тело к отрисовке"""
             self.prepare_snake_body(visual_snake, logical_snake)
 
@@ -63,7 +63,6 @@ class Field:
         else:
             prev_state = Field.get_side(seg_cur, seg_prev)
             next_state = Field.get_side(seg_cur, seg_next)
-            print(prev_state+next_state)
             cur_state = 'corner'
         return prev_state, cur_state, next_state
 
@@ -107,6 +106,42 @@ class Field:
                 rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
         for rect in rect_to_draw:
             self.draw_snake_part(rect, color, x, y)
+
+    def draw_tail(self, tail, logical_snake, color):
+        match Field.get_side(logical_snake[-1], logical_snake[-2]):
+            case 'UP':
+                p1 = (tail[0] * self.cell_size + self.body_offset,
+                      tail[1] * self.cell_size)
+                p2 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size,
+                      tail[1] * self.cell_size)
+                p3 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size // 2,
+                      tail[1] * self.cell_size + self.snake_body_size)
+            case 'DOWN':
+                p1 = (tail[0] * self.cell_size + self.body_offset,
+                      tail[1] * self.cell_size + self.cell_size)
+                p2 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size,
+                      tail[1] * self.cell_size + self.cell_size)
+                p3 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size // 2,
+                      tail[1] * self.cell_size + self.body_offset)
+            case 'LEFT':
+                p1 = (tail[0] * self.cell_size,
+                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size)
+                p2 = (tail[0] * self.cell_size,
+                      tail[1] * self.cell_size + self.body_offset)
+                p3 = (tail[0] * self.cell_size + self.snake_body_size,
+                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size // 2)
+            case 'RIGHT':
+                p1 = (tail[0] * self.cell_size + self.cell_size,
+                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size)
+                p2 = (tail[0] * self.cell_size + self.cell_size,
+                      tail[1] * self.cell_size + self.body_offset)
+                p3 = (tail[0] * self.cell_size + self.body_offset,
+                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size // 2)
+
+        pygame.draw.polygon(
+            self.surface,
+            color_manager.get_color(color),
+            (p1, p2, p3))
 
     def prepare_part_of_corner(self, orientation, x, y):
         """Готовим углы тела к отрисовке"""

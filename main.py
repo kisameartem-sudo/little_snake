@@ -8,7 +8,7 @@ from snake.little_snake.Game.pause_menu import PauseMenu
 from Entities.snake import Snake
 from snake.little_snake.Entities.fruit import Fruits
 from snake.little_snake.Entities.coin import Coins
-from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS
+from settings import WIDTH, HEIGHT, FPS, NUM_CELLS, SNAKE_START_POS, MOVE_SPEED
 from enum import Enum
 
 class GameState(Enum):
@@ -51,7 +51,7 @@ class Game:
 
         self.moving = {
             'move_timer': 0,
-            'move_interval': 0.3
+            'move_interval': MOVE_SPEED
         }
         self.previous_snake = self.snake.get_snake()
         self.fruits = Fruits(set(self.snake.get_snake()))
