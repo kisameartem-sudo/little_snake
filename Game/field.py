@@ -35,7 +35,7 @@ class Field:
                     self.surface,
                     color_manager.get_color('grid_border'),
                     cell,
-                    width=2,
+                    width=1,
                 )
 
     def draw_snake(self, visual_snake, logical_snake, direction):
@@ -108,35 +108,38 @@ class Field:
             self.draw_snake_part(rect, color, x, y)
 
     def draw_tail(self, tail, logical_snake, color):
+        cell_left = tail[0] * self.cell_size
+        cell_top = tail[1] * self.cell_size
+
+        cell_right = cell_left + self.cell_size
+        cell_bottom = cell_top + self.cell_size
+
+        center_x = cell_left + self.cell_size // 2
+        center_y = cell_top + self.cell_size // 2
+
+        body_left = cell_left + self.body_offset
+        body_right = body_left + self.snake_body_size
+
+        body_top = cell_top + self.body_offset
+        body_bottom = body_top + self.snake_body_size
+
         match Field.get_side(logical_snake[-1], logical_snake[-2]):
             case 'UP':
-                p1 = (tail[0] * self.cell_size + self.body_offset,
-                      tail[1] * self.cell_size)
-                p2 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size,
-                      tail[1] * self.cell_size)
-                p3 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size // 2,
-                      tail[1] * self.cell_size + self.snake_body_size)
+                p1 = (body_left, cell_top)
+                p2 = (body_right, cell_top)
+                p3 = (center_x, body_bottom)
             case 'DOWN':
-                p1 = (tail[0] * self.cell_size + self.body_offset,
-                      tail[1] * self.cell_size + self.cell_size)
-                p2 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size,
-                      tail[1] * self.cell_size + self.cell_size)
-                p3 = (tail[0] * self.cell_size + self.body_offset + self.snake_body_size // 2,
-                      tail[1] * self.cell_size + self.body_offset)
+                p1 = (center_x, body_top)
+                p2 = (body_right, cell_bottom)
+                p3 = (body_left, cell_bottom)
             case 'LEFT':
-                p1 = (tail[0] * self.cell_size,
-                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size)
-                p2 = (tail[0] * self.cell_size,
-                      tail[1] * self.cell_size + self.body_offset)
-                p3 = (tail[0] * self.cell_size + self.snake_body_size,
-                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size // 2)
+                p1 = (cell_left, body_top)
+                p2 = (body_right, center_y)
+                p3 = (cell_left, body_bottom)
             case 'RIGHT':
-                p1 = (tail[0] * self.cell_size + self.cell_size,
-                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size)
-                p2 = (tail[0] * self.cell_size + self.cell_size,
-                      tail[1] * self.cell_size + self.body_offset)
-                p3 = (tail[0] * self.cell_size + self.body_offset,
-                      tail[1] * self.cell_size + self.body_offset + self.snake_body_size // 2)
+                p1 = (body_left, center_y)
+                p2 = (cell_right, body_top)
+                p3 = (cell_right, body_bottom)
 
         pygame.draw.polygon(
             self.surface,
