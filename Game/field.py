@@ -125,26 +125,18 @@ class Field:
 
         match Field.get_side(logical_snake[-1], logical_snake[-2]):
             case 'UP':
-                p1 = (body_left, cell_top)
-                p2 = (body_right, cell_top)
-                p3 = (center_x, body_bottom)
+                triang = ((body_left, cell_top), (body_right, cell_top), (center_x, body_bottom))
             case 'DOWN':
-                p1 = (center_x, body_top)
-                p2 = (body_right, cell_bottom)
-                p3 = (body_left, cell_bottom)
+                triang = ((center_x, body_top), (body_right, cell_bottom), (body_left, cell_bottom))
             case 'LEFT':
-                p1 = (cell_left, body_top)
-                p2 = (body_right, center_y)
-                p3 = (cell_left, body_bottom)
+                triang = ((cell_left, body_top), (body_right, center_y), (cell_left, body_bottom))
             case 'RIGHT':
-                p1 = (body_left, center_y)
-                p2 = (cell_right, body_top)
-                p3 = (cell_right, body_bottom)
+                triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
 
         pygame.draw.polygon(
             self.surface,
             color_manager.get_color(color),
-            (p1, p2, p3))
+            triang)
 
     def prepare_part_of_corner(self, orientation, x, y):
         """Готовим углы тела к отрисовке"""
