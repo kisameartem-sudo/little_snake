@@ -38,7 +38,7 @@ class Field:
                     width=1,
                 )
 
-    def draw_snake(self, visual_snake, logical_snake, direction):
+    def draw_snake(self, visual_snake, logical_snake, direction, prev_snake):
         self.snake_direction = direction
         cur_snake = visual_snake
         """Рисуем голову"""
@@ -51,7 +51,7 @@ class Field:
             """Рисуем хвост"""
             self.draw_tail(cur_snake[-1], logical_snake, 'snake_body')
             """Готовим тело к отрисовке"""
-            self.prepare_snake_body(visual_snake, logical_snake)
+            self.prepare_snake_body(visual_snake, logical_snake, prev_snake)
 
     @staticmethod
     def get_state(seg_prev, seg_cur, seg_next):
@@ -74,11 +74,12 @@ class Field:
         else:
             return 'LEFT' if (cur[0] - neighbour[0]) % NUM_CELLS == 1 else 'RIGHT'
 
-    def prepare_snake_body(self, visual_snake, logical_snake):
+    def prepare_snake_body(self, visual_snake, logical_snake, prev_snake):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
-            state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            self.prepare_snake_part_to_draw(state, 'snake_body', seg[0], seg[1])
+            prev_state = self.get_state(prev_snake[i], prev_snake[i + 1], prev_snake[i + 2])
+            cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
+            self.prepare_snake_part_to_draw(cur_state, 'snake_body', seg[0], seg[1])
 
     def prepare_snake_part_to_draw(self, state, color, x, y):
         """Готовим части тела к отрисовке"""

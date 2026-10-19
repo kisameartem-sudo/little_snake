@@ -203,7 +203,7 @@ class Game:
         alpha = self.moving['move_timer'] / self.moving['move_interval']
         snake_to_draw = self.moving_snake(self.previous_snake, self.snake.get_snake(), alpha, NUM_CELLS)
 
-        self.field.draw_snake(snake_to_draw, self.snake.get_snake(), self.snake.get_dirrection())
+        self.field.draw_snake(snake_to_draw, self.snake.get_snake(), self.snake.get_dirrection(), self.previous_snake)
         self.screen.blit(self.ui.surface, (0, 0))
         self.screen.blit(self.field.surface, (WIDTH - HEIGHT, 0))  # Отображаем поле
 
