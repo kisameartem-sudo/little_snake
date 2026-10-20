@@ -14,7 +14,7 @@ class Field:
         self.snake_body_size = int(self.cell_size * 0.7)
         self.body_offset = (self.cell_size - self.snake_body_size) // 2
         self.snake_direction = None
-        self.snake_renderer = SnakeRenderer(self.surface, self.cell_size, NUM_CELLS)
+        self.snake_renderer = SnakeRenderer(self.surface, self.cell_size, self.num_cells)
 
         self.cells = []
         self._create_field()
@@ -48,12 +48,13 @@ class Field:
 
         if len(cur_snake) == 2:
             """Рисуем хвост"""
-            self.draw_tail(cur_snake[-1], logical_snake, 'snake_body')
+            self.draw_polygon(*self.snake_renderer.draw_tail(cur_snake[-1], logical_snake))
         elif len(cur_snake) > 2:
             """Рисуем хвост"""
-            self.draw_tail(cur_snake[-1], logical_snake, 'snake_body')
+            self.draw_polygon(*self.snake_renderer.draw_tail(cur_snake[-1], logical_snake))
             """Готовим тело к отрисовке"""
             self.prepare_snake_body(visual_snake, logical_snake, prev_snake)
+
 
 
 
@@ -90,37 +91,6 @@ class Field:
                 rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
         for rect in rect_to_draw:
             self.draw_snake_part(rect, color, x, y)
-
-    def draw_tail(self, tail, logical_snake, color):
-        cell_left = tail[0] * self.cell_size
-        cell_top = tail[1] * self.cell_size
-
-        cell_right = cell_left + self.cell_size
-        cell_bottom = cell_top + self.cell_size
-
-        center_x = cell_left + self.cell_size // 2
-        center_y = cell_top + self.cell_size // 2
-
-        body_left = cell_left + self.body_offset
-        body_right = body_left + self.snake_body_size
-
-        body_top = cell_top + self.body_offset
-        body_bottom = body_top + self.snake_body_size
-
-        match self.snake_renderer.get_side(logical_snake[-1], logical_snake[-2]):
-            case 'UP':
-                triang = ((body_left, cell_top), (body_right, cell_top), (center_x, body_bottom))
-            case 'DOWN':
-                triang = ((center_x, body_top), (body_right, cell_bottom), (body_left, cell_bottom))
-            case 'LEFT':
-                triang = ((cell_left, body_top), (body_right, center_y), (cell_left, body_bottom))
-            case 'RIGHT':
-                triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
-
-        pygame.draw.polygon(
-            self.surface,
-            color_manager.get_color(color),
-            triang)
 
     def prepare_part_of_corner(self, orientation, x, y):
         """Готовим углы тела к отрисовке"""
@@ -206,3 +176,9 @@ class Field:
             rect_to_draw,
             border_radius=bord
         )
+
+    def draw_polygon(self, polygon, color):
+        pygame.draw.polygon(
+            self.surface,
+            color,
+            polygon)
