@@ -2,6 +2,7 @@ import pygame
 
 from snake.little_snake.settings import HEIGHT, NUM_CELLS
 from snake.little_snake.colors import color_manager
+from snake.little_snake.Game.snake_renderer import SnakeRenderer
 
 class Field:
     def __init__(self):
@@ -13,6 +14,7 @@ class Field:
         self.snake_body_size = int(self.cell_size * 0.7)
         self.body_offset = (self.cell_size - self.snake_body_size) // 2
         self.snake_direction = None
+        self.snake_renderer = SnakeRenderer(self.surface, self.cell_size, NUM_CELLS)
 
         self.cells = []
         self._create_field()
@@ -38,7 +40,7 @@ class Field:
                     width=1,
                 )
 
-    def draw_snake(self, visual_snake, logical_snake, direction, prev_snake):
+    def draw_snake(self, visual_snake, logical_snake, direction, prev_snake, alpha):
         self.snake_direction = direction
         cur_snake = visual_snake
         """Рисуем голову"""
@@ -53,32 +55,13 @@ class Field:
             """Готовим тело к отрисовке"""
             self.prepare_snake_body(visual_snake, logical_snake, prev_snake)
 
-    @staticmethod
-    def get_state(seg_prev, seg_cur, seg_next):
-        """Определяем состояние сегментов тела"""
-        prev_state = 'vert' if seg_prev[0] == seg_cur[0] else 'hor'
-        next_state = 'vert' if seg_next[0] == seg_cur[0] else 'hor'
-        if prev_state == next_state:
-            cur_state = prev_state
-        else:
-            prev_state = Field.get_side(seg_cur, seg_prev)
-            next_state = Field.get_side(seg_cur, seg_next)
-            cur_state = 'corner'
-        return prev_state, cur_state, next_state
 
-    @staticmethod
-    def get_side(cur, neighbour):
-        """Определяем направление сегментов для угла"""
-        if cur[0] == neighbour[0]:
-            return 'UP' if (cur[1] - neighbour[1]) % NUM_CELLS == 1 else 'DOWN'
-        else:
-            return 'LEFT' if (cur[0] - neighbour[0]) % NUM_CELLS == 1 else 'RIGHT'
 
     def prepare_snake_body(self, visual_snake, logical_snake, prev_snake):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
-            prev_state = self.get_state(prev_snake[i], prev_snake[i + 1], prev_snake[i + 2])
-            cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
+            # prev_state = self.get_state(prev_snake[i], prev_snake[i + 1], prev_snake[i + 2])
+            cur_state = self.snake_renderer.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
             self.prepare_snake_part_to_draw(cur_state, 'snake_body', seg[0], seg[1])
 
     def prepare_snake_part_to_draw(self, state, color, x, y):
@@ -124,7 +107,7 @@ class Field:
         body_top = cell_top + self.body_offset
         body_bottom = body_top + self.snake_body_size
 
-        match Field.get_side(logical_snake[-1], logical_snake[-2]):
+        match self.snake_renderer.get_side(logical_snake[-1], logical_snake[-2]):
             case 'UP':
                 triang = ((body_left, cell_top), (body_right, cell_top), (center_x, body_bottom))
             case 'DOWN':
