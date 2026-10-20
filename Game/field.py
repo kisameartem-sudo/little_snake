@@ -48,10 +48,10 @@ class Field:
 
         if len(cur_snake) == 2:
             """Рисуем хвост"""
-            self.draw_polygon(*self.snake_renderer.draw_tail(cur_snake[-1], logical_snake))
+            self.snake_renderer.draw_tail(cur_snake[-1], logical_snake)
         elif len(cur_snake) > 2:
             """Рисуем хвост"""
-            self.draw_polygon(*self.snake_renderer.draw_tail(cur_snake[-1], logical_snake))
+            self.snake_renderer.draw_tail(cur_snake[-1], logical_snake)
             """Готовим тело к отрисовке"""
             self.prepare_snake_body(visual_snake, logical_snake, prev_snake)
 
@@ -176,9 +176,3 @@ class Field:
             rect_to_draw,
             border_radius=bord
         )
-
-    def draw_polygon(self, polygon, color):
-        pygame.draw.polygon(
-            self.surface,
-            color,
-            polygon)

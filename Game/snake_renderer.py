@@ -1,3 +1,5 @@
+import pygame
+
 from snake.little_snake.colors import color_manager
 
 class SnakeRenderer:
@@ -56,4 +58,10 @@ class SnakeRenderer:
             case 'RIGHT':
                 triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
 
-        return triang, self.tail_color
+        self.draw_polygon(triang, self.body_color)
+
+    def draw_polygon(self, polygon, color):
+        pygame.draw.polygon(
+            self.surface,
+            color,
+            polygon)
