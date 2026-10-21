@@ -55,9 +55,6 @@ class Field:
             """Готовим тело к отрисовке"""
             self.prepare_snake_body(visual_snake, logical_snake, prev_snake)
 
-
-
-
     def prepare_snake_body(self, visual_snake, logical_snake, prev_snake):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
@@ -82,40 +79,15 @@ class Field:
                     self.cell_size,
                     self.snake_body_size))
             case 'corner':
-                rect_to_draw.append(self.prepare_part_of_corner(state[0], x, y))
+                rect_to_draw.append(self.snake_renderer.prepare_part_of_corner(state[0], x, y))
                 rect_to_draw.append((
                     x * self.cell_size + self.body_offset,
                     y * self.cell_size + self.body_offset,
                     self.snake_body_size,
                     self.snake_body_size))
-                rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
+                rect_to_draw.append((self.snake_renderer.prepare_part_of_corner(state[2], x, y)))
         for rect in rect_to_draw:
             self.draw_snake_part(rect, color, x, y)
-
-    def prepare_part_of_corner(self, orientation, x, y):
-        """Готовим углы тела к отрисовке"""
-        if orientation == 'UP':
-            x = x * self.cell_size + self.body_offset
-            y = y * self.cell_size
-            width = self.snake_body_size
-            height = self.cell_size // 2
-        elif orientation == 'DOWN':
-            x = x * self.cell_size + self.body_offset
-            y = y * self.cell_size + self.cell_size // 2
-            width = self.snake_body_size
-            height = self.cell_size // 2
-        elif orientation == 'LEFT':
-            x = x * self.cell_size
-            y = y * self.cell_size + self.body_offset
-            width = self.cell_size // 2
-            height = self.snake_body_size
-        elif orientation == 'RIGHT':
-            x = x * self.cell_size + self.cell_size // 2
-            y = y * self.cell_size + self.body_offset
-            width = self.cell_size // 2
-            height = self.snake_body_size
-
-        return x, y, width, height
 
     def draw_snake_part(self, rect_to_draw, color, x, y, bord=5):
         """Отрисовываем части тела"""

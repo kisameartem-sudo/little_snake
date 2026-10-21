@@ -32,6 +32,31 @@ class SnakeRenderer:
         else:
             return 'LEFT' if (cur[0] - neighbour[0]) % self.num_cells == 1 else 'RIGHT'
 
+    def prepare_part_of_corner(self, orientation, x, y):
+        """Готовим углы тела к отрисовке"""
+        if orientation == 'UP':
+            x = x * self.cell_size + self.body_offset
+            y = y * self.cell_size
+            width = self.snake_body_size
+            height = self.cell_size // 2
+        elif orientation == 'DOWN':
+            x = x * self.cell_size + self.body_offset
+            y = y * self.cell_size + self.cell_size // 2
+            width = self.snake_body_size
+            height = self.cell_size // 2
+        elif orientation == 'LEFT':
+            x = x * self.cell_size
+            y = y * self.cell_size + self.body_offset
+            width = self.cell_size // 2
+            height = self.snake_body_size
+        elif orientation == 'RIGHT':
+            x = x * self.cell_size + self.cell_size // 2
+            y = y * self.cell_size + self.body_offset
+            width = self.cell_size // 2
+            height = self.snake_body_size
+
+        return x, y, width, height
+
     def draw_tail(self, tail, logical_snake):
         cell_left = tail[0] * self.cell_size
         cell_top = tail[1] * self.cell_size
@@ -58,7 +83,7 @@ class SnakeRenderer:
             case 'RIGHT':
                 triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
 
-        self.draw_polygon(triang, self.body_color)
+        self.draw_polygon(triang, self.tail_color)
 
     def draw_polygon(self, polygon, color):
         pygame.draw.polygon(
