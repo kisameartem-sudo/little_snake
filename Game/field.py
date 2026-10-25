@@ -53,58 +53,29 @@ class Field:
             """Рисуем хвост"""
             self.snake_renderer.draw_tail(cur_snake[-1], logical_snake)
             """Готовим тело к отрисовке"""
-            self.prepare_snake_body(visual_snake, logical_snake, prev_snake)
-
-    def prepare_snake_body(self, visual_snake, logical_snake, prev_snake):
-        """Готовим тело к отрисовке"""
-        for i, seg in enumerate(visual_snake[1:-1]):
-            # prev_state = self.get_state(prev_snake[i], prev_snake[i + 1], prev_snake[i + 2])
-            cur_state = self.snake_renderer.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            self.prepare_snake_part_to_draw(cur_state, 'snake_body', seg[0], seg[1])
-
-    def prepare_snake_part_to_draw(self, state, color, x, y):
-        """Готовим части тела к отрисовке"""
-        rect_to_draw = []
-        match state[1]:
-            case 'vert':
-                rect_to_draw.append((
-                    x * self.cell_size + self.body_offset,
-                    y * self.cell_size,
-                    self.snake_body_size,
-                    self.cell_size))
-            case 'hor':
-                rect_to_draw.append((
-                    x * self.cell_size,
-                    y * self.cell_size + self.body_offset,
-                    self.cell_size,
-                    self.snake_body_size))
-            case 'corner':
-                rect_to_draw.append(self.snake_renderer.prepare_part_of_corner(state[0], x, y))
-                rect_to_draw.append((
-                    x * self.cell_size + self.body_offset,
-                    y * self.cell_size + self.body_offset,
-                    self.snake_body_size,
-                    self.snake_body_size))
-                rect_to_draw.append((self.snake_renderer.prepare_part_of_corner(state[2], x, y)))
-        for rect in rect_to_draw:
-            self.draw_snake_part(rect, color, x, y)
+            body_to_draw = self.snake_renderer.prepare_snake_body(visual_snake, logical_snake)
+            print(body_to_draw)
+            for rect in body_to_draw:
+                print(rect[0])
+                self.draw_snake_part(rect[0], rect[1], rect[2], rect[3])
 
     def draw_snake_part(self, rect_to_draw, color, x, y, bord=5):
         """Отрисовываем части тела"""
-        pygame.draw.rect(
-            self.surface,
-            color_manager.get_color(color),
-            rect_to_draw,
-            border_radius=bord
-        )
-        if x > self.num_cells - 1:
-            self.draw_part(color, x - self.num_cells, y, bord)
-        if x < 0:
-            self.draw_part(color, self.num_cells + x, y, bord)
-        if y > self.num_cells - 1:
-            self.draw_part(color, x, y - self.num_cells, bord)
-        if y < 0:
-            self.draw_part(color, x, self.num_cells + y, bord)
+        for part in rect_to_draw:
+            pygame.draw.rect(
+                self.surface,
+                color_manager.get_color(color),
+                part,
+                border_radius=bord
+            )
+            if x > self.num_cells - 1:
+                self.draw_part(color, x - self.num_cells, y, bord)
+            if x < 0:
+                self.draw_part(color, self.num_cells + x, y, bord)
+            if y > self.num_cells - 1:
+                self.draw_part(color, x, y - self.num_cells, bord)
+            if y < 0:
+                self.draw_part(color, x, self.num_cells + y, bord)
 
     def draw_fruits(self, fruits):
         for fruit in fruits:

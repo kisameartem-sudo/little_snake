@@ -57,6 +57,41 @@ class SnakeRenderer:
 
         return x, y, width, height
 
+    def prepare_snake_body(self, visual_snake, logical_snake):
+        """Готовим тело к отрисовке"""
+        body_to_draw = []
+        for i, seg in enumerate(visual_snake[1:-1]):
+            cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
+            body_to_draw.append((self.prepare_snake_part_to_draw(cur_state, seg[0], seg[1]), 'snake_body', seg[0], seg[1]))
+
+        return body_to_draw
+
+    def prepare_snake_part_to_draw(self, state, x, y):
+        """Готовим части тела к отрисовке"""
+        rect_to_draw = []
+        match state[1]:
+            case 'vert':
+                rect_to_draw.append((
+                    x * self.cell_size + self.body_offset,
+                    y * self.cell_size,
+                    self.snake_body_size,
+                    self.cell_size))
+            case 'hor':
+                rect_to_draw.append((
+                    x * self.cell_size,
+                    y * self.cell_size + self.body_offset,
+                    self.cell_size,
+                    self.snake_body_size))
+            case 'corner':
+                rect_to_draw.append(self.prepare_part_of_corner(state[0], x, y))
+                rect_to_draw.append((
+                    x * self.cell_size + self.body_offset,
+                    y * self.cell_size + self.body_offset,
+                    self.snake_body_size,
+                    self.snake_body_size))
+                rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
+        return rect_to_draw
+
     def draw_tail(self, tail, logical_snake):
         cell_left = tail[0] * self.cell_size
         cell_top = tail[1] * self.cell_size
