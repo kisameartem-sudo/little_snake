@@ -10,6 +10,7 @@ class SnakeRenderer:
         self.surface = surface
         self.cell_size = cell_size
         self.num_cells = num_cells
+        self.field_width = self.cell_size * self.num_cells
         self.snake_body_size = int(self.cell_size * 0.7)
         self.body_offset = (self.cell_size - self.snake_body_size) // 2
 
@@ -57,16 +58,13 @@ class SnakeRenderer:
 
         return x, y, width, height
 
-    def prepare_snake_body(self, visual_snake, logical_snake):
+    def draw_snake_body(self, visual_snake, logical_snake):
         """Готовим тело к отрисовке"""
-        body_to_draw = []
         for i, seg in enumerate(visual_snake[1:-1]):
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            body_to_draw.append((self.prepare_snake_part_to_draw(cur_state, seg[0], seg[1]), 'snake_body', seg[0], seg[1]))
+            self.draw_snake_part(self.identify_body_part(cur_state, seg[0], seg[1]), 'snake_body', seg[0], seg[1])
 
-        return body_to_draw
-
-    def prepare_snake_part_to_draw(self, state, x, y):
+    def identify_body_part(self, state, x, y):
         """Готовим части тела к отрисовке"""
         rect_to_draw = []
         match state[1]:
@@ -119,6 +117,25 @@ class SnakeRenderer:
                 triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
 
         self.draw_polygon(triang, self.tail_color)
+
+    def draw_snake_part(self, rect_to_draw, color, x, y, bord=5):
+        """Отрисовываем части тела"""
+
+        for part in rect_to_draw:
+            part = pygame.Rect(part)
+            alt_part = None
+            if part.right > self.field_width:
+                alt_part = part.move(-self.field_width, 0)
+            if part.left < self.field_width:
+                alt_part = part.move(self.field_width, 0)
+            if part.top > self.field_width:
+                alt_part = part.move(0, -self.field_width)
+            if part.top < self.field_width:
+                alt_part = part.move(0, self.field_width)
+
+            pygame.draw.rect(self.surface, self.body_color, part, border_radius=5)
+            if alt_part is not None:
+                pygame.draw.rect(self.surface, self.body_color, alt_part, border_radius=5)
 
     def draw_polygon(self, polygon, color):
         pygame.draw.polygon(

@@ -52,30 +52,8 @@ class Field:
         elif len(cur_snake) > 2:
             """Рисуем хвост"""
             self.snake_renderer.draw_tail(cur_snake[-1], logical_snake)
-            """Готовим тело к отрисовке"""
-            body_to_draw = self.snake_renderer.prepare_snake_body(visual_snake, logical_snake)
-            print(body_to_draw)
-            for rect in body_to_draw:
-                print(rect[0])
-                self.draw_snake_part(rect[0], rect[1], rect[2], rect[3])
-
-    def draw_snake_part(self, rect_to_draw, color, x, y, bord=5):
-        """Отрисовываем части тела"""
-        for part in rect_to_draw:
-            pygame.draw.rect(
-                self.surface,
-                color_manager.get_color(color),
-                part,
-                border_radius=bord
-            )
-            if x > self.num_cells - 1:
-                self.draw_part(color, x - self.num_cells, y, bord)
-            if x < 0:
-                self.draw_part(color, self.num_cells + x, y, bord)
-            if y > self.num_cells - 1:
-                self.draw_part(color, x, y - self.num_cells, bord)
-            if y < 0:
-                self.draw_part(color, x, self.num_cells + y, bord)
+            """Готовим и рисуем тело"""
+            self.snake_renderer.draw_snake_body(visual_snake, logical_snake)
 
     def draw_fruits(self, fruits):
         for fruit in fruits:
