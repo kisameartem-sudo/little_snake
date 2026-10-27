@@ -123,19 +123,20 @@ class SnakeRenderer:
 
         for part in rect_to_draw:
             part = pygame.Rect(part)
-            alt_part = None
+            alt_part = []
             if part.right > self.field_width:
-                alt_part = part.move(-self.field_width, 0)
-            if part.left < self.field_width:
-                alt_part = part.move(self.field_width, 0)
-            if part.top > self.field_width:
-                alt_part = part.move(0, -self.field_width)
-            if part.top < self.field_width:
-                alt_part = part.move(0, self.field_width)
+                alt_part.append(part.move(-self.field_width, 0))
+            if part.left < 0:
+                alt_part.append(part.move(self.field_width, 0))
+            if part.bottom > self.field_width:
+                alt_part.append(part.move(0, -self.field_width))
+            if part.top < 0:
+                alt_part.append(part.move(0, self.field_width))
 
             pygame.draw.rect(self.surface, self.body_color, part, border_radius=5)
-            if alt_part is not None:
-                pygame.draw.rect(self.surface, self.body_color, alt_part, border_radius=5)
+            if alt_part:
+                for alt in alt_part:
+                    pygame.draw.rect(self.surface, self.body_color, alt, border_radius=5)
 
     def draw_polygon(self, polygon, color):
         pygame.draw.polygon(
