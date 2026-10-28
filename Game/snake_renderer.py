@@ -1,5 +1,4 @@
 import pygame
-
 from snake.little_snake.colors import color_manager
 
 class SnakeRenderer:
@@ -11,7 +10,7 @@ class SnakeRenderer:
         self.cell_size = cell_size
         self.num_cells = num_cells
         self.field_width = self.cell_size * self.num_cells
-        self.snake_body_size = int(self.cell_size * 0.7)
+        self.snake_body_size = int(self.cell_size * 0.5)
         self.body_offset = (self.cell_size - self.snake_body_size) // 2
 
     def get_state(self,seg_prev, seg_cur, seg_next):
@@ -102,51 +101,66 @@ class SnakeRenderer:
             (0.8, 0.2)  #Центр-право-верх
         )
 
+        head_global = self.rotate_and_transform_part(head_local, x, y, direction)
+        self.draw_polygon(head_global, self.head_color)
+
+    def rotate_and_transform_part(self, part_local, x, y, direction):
         match direction:
-            case 'LEFT':
+            case 'RIGHT':
                 pass
             case 'UP':
-                head_local = ...
-            case 'RIGHT':
-                head_local = ...
+                part_local = tuple((yy, 1 - xx) for xx, yy in part_local)
+            case 'LEFT':
+                part_local = tuple((1 - xx, 1 - yy) for xx, yy in part_local)
             case 'DOWN':
-                head_local = ...
+                part_local = tuple((1 - yy, xx) for xx, yy in part_local)
 
         head_global = []
 
-        for local_x, local_y in head_local:
+        for local_x, local_y in part_local:
             head_global.append(((x + local_x) * self.cell_size,
                                 (y + local_y) * self.cell_size))
+        return head_global
 
-        self.draw_polygon(head_global, self.head_color)
 
     def draw_tail(self, tail, logical_snake):
-        cell_left = tail[0] * self.cell_size
-        cell_top = tail[1] * self.cell_size
+        0.7, 0.3
+        tail_local = (
+            (1, 0.3),
+            (1, 0.7),
+            (0, 0.5)
+        )
+        direction = self.get_side(logical_snake[-1], logical_snake[-2])
 
-        cell_right = cell_left + self.cell_size
-        cell_bottom = cell_top + self.cell_size
+        tail_global = self.rotate_and_transform_part(tail_local, tail[0], tail[1], direction)
+        self.draw_polygon(tail_global, self.tail_color)
 
-        center_x = cell_left + self.cell_size // 2
-        center_y = cell_top + self.cell_size // 2
+        # cell_left = tail[0] * self.cell_size
+        # cell_top = tail[1] * self.cell_size
+        #
+        # cell_right = cell_left + self.cell_size
+        # cell_bottom = cell_top + self.cell_size
+        #
+        # center_x = cell_left + self.cell_size // 2
+        # center_y = cell_top + self.cell_size // 2
+        #
+        # body_left = cell_left + self.body_offset
+        # body_right = body_left + self.snake_body_size
+        #
+        # body_top = cell_top + self.body_offset
+        # body_bottom = body_top + self.snake_body_size
+        #
+        # match self.get_side(logical_snake[-1], logical_snake[-2]):
+        #     case 'UP':
+        #         triang = ((body_left, cell_top), (body_right, cell_top), (center_x, body_bottom))
+        #     case 'DOWN':
+        #         triang = ((center_x, body_top), (body_right, cell_bottom), (body_left, cell_bottom))
+        #     case 'LEFT':
+        #         triang = ((cell_left, body_top), (body_right, center_y), (cell_left, body_bottom))
+        #     case 'RIGHT':
+        #         triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
 
-        body_left = cell_left + self.body_offset
-        body_right = body_left + self.snake_body_size
-
-        body_top = cell_top + self.body_offset
-        body_bottom = body_top + self.snake_body_size
-
-        match self.get_side(logical_snake[-1], logical_snake[-2]):
-            case 'UP':
-                triang = ((body_left, cell_top), (body_right, cell_top), (center_x, body_bottom))
-            case 'DOWN':
-                triang = ((center_x, body_top), (body_right, cell_bottom), (body_left, cell_bottom))
-            case 'LEFT':
-                triang = ((cell_left, body_top), (body_right, center_y), (cell_left, body_bottom))
-            case 'RIGHT':
-                triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
-
-        self.draw_polygon(triang, self.tail_color)
+        # self.draw_polygon(triang, self.tail_color)
 
     def draw_snake_part(self, rect_to_draw):
         """Отрисовываем части тела"""
