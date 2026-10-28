@@ -72,11 +72,21 @@ class SnakeRenderer:
         """Готовим части тела к отрисовке"""
         match state[1]:
             case 'vert':
-                return ((0.2, 0), (0.8, 0), (0.8, 1), (0.2, 1)), 'DOWN'
+                return ((0.2, 0), (0.8, 0), (0.8, 1), (0.2, 1)), 'RIGHT'
             case 'hor':
-                return ((0, 0.2), (1, 0.2), (1, 0.8), (0, 0.8)), 'LEFT'
+                return ((0, 0.2), (1, 0.2), (1, 0.8), (0, 0.8)), 'RIGHT'
             case 'corner':
-                return ((0.2, 0), (0.8, 0), (0.8, 0.2), (1, 0.2), (1, 0.8), (0.2, 0.8)), 'UP'
+                sides = frozenset((state[0], state[2]))
+
+                if sides == frozenset(('UP', 'RIGHT')):
+                    direction = 'RIGHT'
+                elif sides == frozenset(('RIGHT', 'DOWN')):
+                    direction = 'DOWN'
+                elif sides == frozenset(('DOWN', 'LEFT')):
+                    direction = 'LEFT'
+                elif sides == frozenset(('LEFT', 'UP')):
+                    direction = 'UP'
+                return ((0.2, 0), (0.8, 0), (0.8, 0.2), (1, 0.2), (1, 0.8), (0.2, 0.8)), direction
 
     def draw_head(self, x, y, direction):
         head_local = (
