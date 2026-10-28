@@ -32,62 +32,51 @@ class SnakeRenderer:
         else:
             return 'LEFT' if (cur[0] - neighbour[0]) % self.num_cells == 1 else 'RIGHT'
 
-    def prepare_part_of_corner(self, orientation, x, y):
-        """Готовим углы тела к отрисовке"""
-        if orientation == 'UP':
-            x = x * self.cell_size + self.body_offset
-            y = y * self.cell_size
-            width = self.snake_body_size
-            height = self.cell_size // 2
-        elif orientation == 'DOWN':
-            x = x * self.cell_size + self.body_offset
-            y = y * self.cell_size + self.cell_size // 2
-            width = self.snake_body_size
-            height = self.cell_size // 2
-        elif orientation == 'LEFT':
-            x = x * self.cell_size
-            y = y * self.cell_size + self.body_offset
-            width = self.cell_size // 2
-            height = self.snake_body_size
-        elif orientation == 'RIGHT':
-            x = x * self.cell_size + self.cell_size // 2
-            y = y * self.cell_size + self.body_offset
-            width = self.cell_size // 2
-            height = self.snake_body_size
-
-        return x, y, width, height
+    # def prepare_part_of_corner(self, orientation, x, y):
+    #     """Готовим углы тела к отрисовке"""
+    #     if orientation == 'UP':
+    #         x = x * self.cell_size + self.body_offset
+    #         y = y * self.cell_size
+    #         width = self.snake_body_size
+    #         height = self.cell_size // 2
+    #     elif orientation == 'DOWN':
+    #         x = x * self.cell_size + self.body_offset
+    #         y = y * self.cell_size + self.cell_size // 2
+    #         width = self.snake_body_size
+    #         height = self.cell_size // 2
+    #     elif orientation == 'LEFT':
+    #         x = x * self.cell_size
+    #         y = y * self.cell_size + self.body_offset
+    #         width = self.cell_size // 2
+    #         height = self.snake_body_size
+    #     elif orientation == 'RIGHT':
+    #         x = x * self.cell_size + self.cell_size // 2
+    #         y = y * self.cell_size + self.body_offset
+    #         width = self.cell_size // 2
+    #         height = self.snake_body_size
+    #
+    #     return x, y, width, height
 
     def draw_snake_body(self, visual_snake, logical_snake):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            self.draw_snake_part(self.identify_body_part(cur_state, seg[0], seg[1]))
+            # self.draw_snake_part(self.identify_body_part(cur_state, seg[0], seg[1]))
+            local_seg, direction = SnakeRenderer.identify_body_part(cur_state)
+            seg_global = self.rotate_and_transform_part(local_seg, seg[0], seg[1], direction)
+            self.draw_polygon(seg_global, self.body_color)
 
-    def identify_body_part(self, state, x, y):
+
+    @staticmethod
+    def identify_body_part(state):
         """Готовим части тела к отрисовке"""
-        rect_to_draw = []
         match state[1]:
             case 'vert':
-                rect_to_draw.append((
-                    x * self.cell_size + self.body_offset,
-                    y * self.cell_size,
-                    self.snake_body_size,
-                    self.cell_size))
+                return ((0.2, 0), (0.8, 0), (0.8, 1), (0.2, 1)), 'DOWN'
             case 'hor':
-                rect_to_draw.append((
-                    x * self.cell_size,
-                    y * self.cell_size + self.body_offset,
-                    self.cell_size,
-                    self.snake_body_size))
+                return ((0, 0.2), (1, 0.2), (1, 0.8), (0, 0.8)), 'LEFT'
             case 'corner':
-                rect_to_draw.append(self.prepare_part_of_corner(state[0], x, y))
-                rect_to_draw.append((
-                    x * self.cell_size + self.body_offset,
-                    y * self.cell_size + self.body_offset,
-                    self.snake_body_size,
-                    self.snake_body_size))
-                rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
-        return rect_to_draw
+                return ((0.2, 0), (0.8, 0), (0.8, 0.2), (1, 0.2), (1, 0.8), (0.2, 0.8)), 'UP'
 
     def draw_head(self, x, y, direction):
         head_local = (
@@ -115,16 +104,14 @@ class SnakeRenderer:
             case 'DOWN':
                 part_local = tuple((1 - yy, xx) for xx, yy in part_local)
 
-        head_global = []
+        part_global = []
 
         for local_x, local_y in part_local:
-            head_global.append(((x + local_x) * self.cell_size,
+            part_global.append(((x + local_x) * self.cell_size,
                                 (y + local_y) * self.cell_size))
-        return head_global
-
+        return part_global
 
     def draw_tail(self, tail, logical_snake):
-        0.7, 0.3
         tail_local = (
             (1, 0.3),
             (1, 0.7),
@@ -135,51 +122,24 @@ class SnakeRenderer:
         tail_global = self.rotate_and_transform_part(tail_local, tail[0], tail[1], direction)
         self.draw_polygon(tail_global, self.tail_color)
 
-        # cell_left = tail[0] * self.cell_size
-        # cell_top = tail[1] * self.cell_size
-        #
-        # cell_right = cell_left + self.cell_size
-        # cell_bottom = cell_top + self.cell_size
-        #
-        # center_x = cell_left + self.cell_size // 2
-        # center_y = cell_top + self.cell_size // 2
-        #
-        # body_left = cell_left + self.body_offset
-        # body_right = body_left + self.snake_body_size
-        #
-        # body_top = cell_top + self.body_offset
-        # body_bottom = body_top + self.snake_body_size
-        #
-        # match self.get_side(logical_snake[-1], logical_snake[-2]):
-        #     case 'UP':
-        #         triang = ((body_left, cell_top), (body_right, cell_top), (center_x, body_bottom))
-        #     case 'DOWN':
-        #         triang = ((center_x, body_top), (body_right, cell_bottom), (body_left, cell_bottom))
-        #     case 'LEFT':
-        #         triang = ((cell_left, body_top), (body_right, center_y), (cell_left, body_bottom))
-        #     case 'RIGHT':
-        #         triang = ((body_left, center_y), (cell_right, body_top), (cell_right, body_bottom))
-
-        # self.draw_polygon(triang, self.tail_color)
-
-    def draw_snake_part(self, rect_to_draw):
-        """Отрисовываем части тела"""
-        for part in rect_to_draw:
-            part = pygame.Rect(part)
-            alt_parts = []
-            if part.right > self.field_width:
-                alt_parts.append(part.move(-self.field_width, 0))
-            if part.left < 0:
-                alt_parts.append(part.move(self.field_width, 0))
-            if part.bottom > self.field_width:
-                alt_parts.append(part.move(0, -self.field_width))
-            if part.top < 0:
-                alt_parts.append(part.move(0, self.field_width))
-
-            pygame.draw.rect(self.surface, self.body_color, part, border_radius=5)
-            if alt_parts:
-                for alt in alt_parts:
-                    pygame.draw.rect(self.surface, self.body_color, alt, border_radius=5)
+    # def draw_snake_part(self, rect_to_draw):
+    #     """Отрисовываем части тела"""
+    #     for part in rect_to_draw:
+    #         part = pygame.Rect(part)
+    #         alt_parts = []
+    #         if part.right > self.field_width:
+    #             alt_parts.append(part.move(-self.field_width, 0))
+    #         if part.left < 0:
+    #             alt_parts.append(part.move(self.field_width, 0))
+    #         if part.bottom > self.field_width:
+    #             alt_parts.append(part.move(0, -self.field_width))
+    #         if part.top < 0:
+    #             alt_parts.append(part.move(0, self.field_width))
+    #
+    #         pygame.draw.rect(self.surface, self.body_color, part, border_radius=5)
+    #         if alt_parts:
+    #             for alt in alt_parts:
+    #                 pygame.draw.rect(self.surface, self.body_color, alt, border_radius=5)
 
     def draw_polygon(self, polygon, color):
         pygame.draw.polygon(
