@@ -41,10 +41,11 @@ class Field:
                 )
 
     def draw_snake(self, visual_snake, logical_snake, direction, prev_snake, alpha):
+        """Функция разделяет змею на состовляющие и отрисовывает"""
         self.snake_direction = direction
         cur_snake = visual_snake
         """Рисуем голову"""
-        self.draw_square('snake_head', cur_snake[0][0], cur_snake[0][1], 10)
+        self.snake_renderer.draw_head(cur_snake[0][0], cur_snake[0][1])
 
         if len(cur_snake) == 2:
             """Рисуем хвост"""
@@ -68,32 +69,5 @@ class Field:
             self.surface,
             color_manager.get_color(color),
             (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
-            border_radius=bord
-        )
-        if x > self.num_cells-1:
-            self.draw_part(color, x - self.num_cells, y, bord, False)
-        if x < 0:
-            self.draw_part(color, self.num_cells + x, y, bord, False)
-        if y > self.num_cells-1:
-            self.draw_part(color, x, y - self.num_cells, bord, False)
-        if y < 0:
-            self.draw_part(color, x, self.num_cells + y, bord, False)
-
-    def draw_part(self, color, x, y, bord, is_body=True):
-        if is_body:
-            rect_to_draw = (x * self.cell_size + self.body_offset,
-                            y * self.cell_size,
-                            self.snake_body_size,
-                            self.cell_size)
-        else:
-            rect_to_draw = (x * self.cell_size,
-                            y * self.cell_size,
-                            self.cell_size,
-                            self.cell_size)
-
-        pygame.draw.rect(
-            self.surface,
-            color_manager.get_color(color),
-            rect_to_draw,
             border_radius=bord
         )

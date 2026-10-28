@@ -62,7 +62,7 @@ class SnakeRenderer:
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            self.draw_snake_part(self.identify_body_part(cur_state, seg[0], seg[1]), 'snake_body', seg[0], seg[1])
+            self.draw_snake_part(self.identify_body_part(cur_state, seg[0], seg[1]))
 
     def identify_body_part(self, state, x, y):
         """Готовим части тела к отрисовке"""
@@ -89,6 +89,14 @@ class SnakeRenderer:
                     self.snake_body_size))
                 rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
         return rect_to_draw
+
+    def draw_head(self, x, y):
+        pygame.draw.rect(
+            self.surface,
+            self.head_color,
+            (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
+            border_radius=10
+        )
 
     def draw_tail(self, tail, logical_snake):
         cell_left = tail[0] * self.cell_size
@@ -118,24 +126,23 @@ class SnakeRenderer:
 
         self.draw_polygon(triang, self.tail_color)
 
-    def draw_snake_part(self, rect_to_draw, color, x, y, bord=5):
+    def draw_snake_part(self, rect_to_draw):
         """Отрисовываем части тела"""
-
         for part in rect_to_draw:
             part = pygame.Rect(part)
-            alt_part = []
+            alt_parts = []
             if part.right > self.field_width:
-                alt_part.append(part.move(-self.field_width, 0))
+                alt_parts.append(part.move(-self.field_width, 0))
             if part.left < 0:
-                alt_part.append(part.move(self.field_width, 0))
+                alt_parts.append(part.move(self.field_width, 0))
             if part.bottom > self.field_width:
-                alt_part.append(part.move(0, -self.field_width))
+                alt_parts.append(part.move(0, -self.field_width))
             if part.top < 0:
-                alt_part.append(part.move(0, self.field_width))
+                alt_parts.append(part.move(0, self.field_width))
 
             pygame.draw.rect(self.surface, self.body_color, part, border_radius=5)
-            if alt_part:
-                for alt in alt_part:
+            if alt_parts:
+                for alt in alt_parts:
                     pygame.draw.rect(self.surface, self.body_color, alt, border_radius=5)
 
     def draw_polygon(self, polygon, color):
