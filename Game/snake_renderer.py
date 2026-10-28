@@ -91,18 +91,34 @@ class SnakeRenderer:
         return rect_to_draw
 
     def draw_head(self, x, y, direction):
-        head_polygon = (
-        (x*self.cell_size + self.cell_size, y*self.cell_size + self.body_offset*2),  #Право-верх
-        (x*self.cell_size + self.cell_size, y*self.cell_size + self.cell_size - self.body_offset*1.5),  #Право-низ
-        (x*self.cell_size + self.snake_body_size, y*self.cell_size + self.cell_size), #Центр-право-низ
-        (x*self.cell_size + self.cell_size // 2, y*self.cell_size + self.cell_size), #Центр-низ
-        (x*self.cell_size, y*self.cell_size + self.body_offset + self.snake_body_size),  #Лево-низ
-        (x*self.cell_size, y*self.cell_size + self.body_offset),  #Лево-верх
-        (x*self.cell_size + self.cell_size // 2, y*self.cell_size),  #Центр-верх
-        (x*self.cell_size + self.snake_body_size, y*self.cell_size)  # Центр-право-верх
+        head_local = (
+            (1, 0.4),  #Право-верх
+            (1, 0.6),  #Право-низ
+            (0.8, 0.8), #Центр-право-низ
+            (0.4, 0.8), #Центр-лево-низ
+            (0, 0.7),  #Лево-низ
+            (0, 0.3),  #Лево-верх
+            (0.4, 0.2),  #Центр-лево-верх
+            (0.8, 0.2)  #Центр-право-верх
         )
 
-        self.draw_polygon(head_polygon, self.head_color)
+        match direction:
+            case 'LEFT':
+                pass
+            case 'UP':
+                head_local = ...
+            case 'RIGHT':
+                head_local = ...
+            case 'DOWN':
+                head_local = ...
+
+        head_global = []
+
+        for local_x, local_y in head_local:
+            head_global.append(((x + local_x) * self.cell_size,
+                                (y + local_y) * self.cell_size))
+
+        self.draw_polygon(head_global, self.head_color)
 
     def draw_tail(self, tail, logical_snake):
         cell_left = tail[0] * self.cell_size
