@@ -90,13 +90,19 @@ class SnakeRenderer:
                 rect_to_draw.append((self.prepare_part_of_corner(state[2], x, y)))
         return rect_to_draw
 
-    def draw_head(self, x, y):
-        pygame.draw.rect(
-            self.surface,
-            self.head_color,
-            (x * self.cell_size, y * self.cell_size, self.cell_size, self.cell_size),
-            border_radius=10
+    def draw_head(self, x, y, direction):
+        head_polygon = (
+        (x*self.cell_size + self.cell_size, y*self.cell_size + self.body_offset*2),  #Право-верх
+        (x*self.cell_size + self.cell_size, y*self.cell_size + self.cell_size - self.body_offset*1.5),  #Право-низ
+        (x*self.cell_size + self.snake_body_size, y*self.cell_size + self.cell_size), #Центр-право-низ
+        (x*self.cell_size + self.cell_size // 2, y*self.cell_size + self.cell_size), #Центр-низ
+        (x*self.cell_size, y*self.cell_size + self.body_offset + self.snake_body_size),  #Лево-низ
+        (x*self.cell_size, y*self.cell_size + self.body_offset),  #Лево-верх
+        (x*self.cell_size + self.cell_size // 2, y*self.cell_size),  #Центр-верх
+        (x*self.cell_size + self.snake_body_size, y*self.cell_size)  # Центр-право-верх
         )
+
+        self.draw_polygon(head_polygon, self.head_color)
 
     def draw_tail(self, tail, logical_snake):
         cell_left = tail[0] * self.cell_size

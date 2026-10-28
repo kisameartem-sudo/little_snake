@@ -45,7 +45,7 @@ class Field:
         self.snake_direction = direction
         cur_snake = visual_snake
         """Рисуем голову"""
-        self.snake_renderer.draw_head(cur_snake[0][0], cur_snake[0][1])
+        self.snake_renderer.draw_head(cur_snake[0][0], cur_snake[0][1], direction)
 
         if len(cur_snake) == 2:
             """Рисуем хвост"""
