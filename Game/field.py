@@ -41,20 +41,7 @@ class Field:
                 )
 
     def draw_snake(self, visual_snake, logical_snake, direction, prev_snake, alpha):
-        """Функция разделяет змею на состовляющие и отрисовывает"""
-        self.snake_direction = direction
-        cur_snake = visual_snake
-        """Рисуем голову"""
-        self.snake_renderer.draw_head(cur_snake[0][0], cur_snake[0][1], direction)
-
-        if len(cur_snake) == 2:
-            """Рисуем хвост"""
-            self.snake_renderer.draw_tail(cur_snake[-1], logical_snake)
-        elif len(cur_snake) > 2:
-            """Рисуем хвост"""
-            self.snake_renderer.draw_tail(cur_snake[-1], logical_snake)
-            """Готовим и рисуем тело"""
-            self.snake_renderer.draw_snake_body(visual_snake, logical_snake)
+        self.snake_renderer.prepare_snake_to_draw(visual_snake, logical_snake, direction, prev_snake, alpha)
 
     def draw_fruits(self, fruits):
         for fruit in fruits:

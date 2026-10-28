@@ -32,11 +32,24 @@ class SnakeRenderer:
         else:
             return 'LEFT' if (cur[0] - neighbour[0]) % self.num_cells == 1 else 'RIGHT'
 
+    def prepare_snake_to_draw(self, visual_snake, logical_snake, direction, prev_snake, alpha):
+        cur_snake = visual_snake
+        """Рисуем голову"""
+        self.draw_head(cur_snake[0][0], cur_snake[0][1], direction)
+
+        if len(cur_snake) == 2:
+            """Рисуем хвост"""
+            self.draw_tail(cur_snake[-1], logical_snake)
+        elif len(cur_snake) > 2:
+            """Рисуем хвост"""
+            self.draw_tail(cur_snake[-1], logical_snake)
+            """Готовим и рисуем тело"""
+            self.draw_snake_body(visual_snake, logical_snake)
+
     def draw_snake_body(self, visual_snake, logical_snake):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            # self.draw_snake_part(self.identify_body_part(cur_state, seg[0], seg[1]))
             local_seg, direction = self.identify_body_part(cur_state)
             seg_global = self.rotate_and_transform_part(local_seg, seg[0], seg[1], direction)
             self.draw_polygon(seg_global, self.body_color)
@@ -75,7 +88,7 @@ class SnakeRenderer:
                     (self.figure_edges[1], self.figure_edges[0]),
                     (1, self.figure_edges[0]),
                     (1, self.figure_edges[1]),
-                    (0.2, self.figure_edges[1])),
+                    (self.figure_edges[0], self.figure_edges[1])),
                         direction)
 
     def draw_head(self, x, y, direction):
@@ -127,7 +140,7 @@ class SnakeRenderer:
         left = min(point[0] for point in polygon)
         right = max(point[0] for point in polygon)
         up = min(point[1] for point in polygon)
-        down = max(point[0] for point in polygon)
+        down = max(point[1] for point in polygon)
         shifted_polygon = []
         if right > self.field_width:
             shifted_polygon.append([
