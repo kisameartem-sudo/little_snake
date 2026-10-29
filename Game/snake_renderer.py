@@ -63,7 +63,10 @@ class SnakeRenderer:
 
             rotated_seg = self.rotate_part(local_seg, direction)
 
-            if old_state is not None and old_state[1] == 'hor' and cur_state[1] == 'corner':
+            if (old_state is not None and
+                    old_state[1] == 'hor' and
+                    cur_state[1] == 'corner' and
+                    direction == 'RIGHT'):
                 rotated_seg = self.interpolate_local_shape(old_local, local_seg, alpha)
 
             seg_global = self.transform_part(rotated_seg, seg[0], seg[1])
@@ -129,7 +132,7 @@ class SnakeRenderer:
 
     def interpolate_local_shape(self, old_local, new_local, alpha):
         cur_local = []
-        for old_x, old_y, target_x, target_y in zip(old_local, new_local):
+        for (old_x, old_y), (target_x, target_y) in zip(old_local, new_local):
             cur_local.append(
                 (old_x + (target_x - old_x) * alpha, old_y + (target_y - old_y) * alpha)
             )
