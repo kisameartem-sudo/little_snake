@@ -11,9 +11,6 @@ class Field:
         self.num_cells = NUM_CELLS
         self.cell_size = HEIGHT // self.num_cells
         """ЗМЕЯ"""
-        self.snake_body_size = int(self.cell_size * 0.7)
-        self.body_offset = (self.cell_size - self.snake_body_size) // 2
-        self.snake_direction = None
         self.snake_renderer = SnakeRenderer(self.surface, self.cell_size, self.num_cells)
 
         self.cells = []

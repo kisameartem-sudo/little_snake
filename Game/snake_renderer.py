@@ -34,6 +34,7 @@ class SnakeRenderer:
 
     def prepare_snake_to_draw(self, visual_snake, logical_snake, direction, prev_snake, alpha):
         cur_snake = visual_snake
+        old_snake = prev_snake
         """Рисуем голову"""
         self.draw_head(cur_snake[0][0], cur_snake[0][1], direction)
 
@@ -44,12 +45,13 @@ class SnakeRenderer:
             """Рисуем хвост"""
             self.draw_tail(cur_snake[-1], logical_snake)
             """Готовим и рисуем тело"""
-            self.draw_snake_body(visual_snake, logical_snake)
+            self.draw_snake_body(visual_snake, logical_snake, old_snake)
 
-    def draw_snake_body(self, visual_snake, logical_snake):
+    def draw_snake_body(self, visual_snake, logical_snake, old_snake):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
+            old_state = self.get_state(old_snake[i], old_snake[i+1], old_snake[i+2])
             local_seg, direction = self.identify_body_part(cur_state)
             seg_global = self.rotate_and_transform_part(local_seg, seg[0], seg[1], direction)
             self.draw_polygon(seg_global, self.body_color)
