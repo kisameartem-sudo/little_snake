@@ -45,15 +45,24 @@ class SnakeRenderer:
             """Рисуем хвост"""
             self.draw_tail(cur_snake[-1], logical_snake)
             """Готовим и рисуем тело"""
-            self.draw_snake_body(visual_snake, logical_snake, old_snake)
+            self.draw_snake_body(visual_snake, logical_snake, old_snake, alpha)
 
-    def draw_snake_body(self, visual_snake, logical_snake, old_snake):
+    def draw_snake_body(self, visual_snake, logical_snake, old_snake, alpha):
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
+            """Разбиваем тело не сегменты и работаем с каждым сегментом отдельно"""
+            #Получаем состояние сегмента в конечной точке перемещения
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
+            # Получаем состояние сегмента в начальной точке перемещения
             old_state = self.get_state(old_snake[i], old_snake[i+1], old_snake[i+2]) if i + 2 < len(old_snake) else None
+            #Определяем вид сегмента для конечной точки перемещения
             local_seg, direction = self.identify_body_part(cur_state)
-            seg_global = self.rotate_and_transform_part(local_seg, seg[0], seg[1], direction)
+            # Определяем вид сегмента для начальной точки перемещения
+            if old_state is not None:
+                old_local, old_direction = self.identify_body_part(old_state)
+
+            rotated_seg = self.rotate_part(local_seg, direction)
+            seg_global = self.transform_part(rotated_seg, seg[0], seg[1])
             self.draw_polygon(seg_global, self.body_color)
 
             if old_state is not None and old_state != cur_state:
@@ -64,17 +73,19 @@ class SnakeRenderer:
         match state[1]:
             case 'vert':
                 return ((
-                    (self.figure_edges[0], 0),
-                    (self.figure_edges[1], 0),
-                    (self.figure_edges[1], 1),
-                    (self.figure_edges[0], 1)),
+                            (self.figure_edges[0], 0),
+                            (self.figure_edges[1], 0),
+                            (self.figure_edges[1], 1),
+                            (self.figure_edges[0], 1)),
                         'RIGHT')
             case 'hor':
                 return ((
-                    (0, self.figure_edges[0]),
-                    (1, self.figure_edges[0]),
-                    (1, self.figure_edges[1]),
-                    (0, self.figure_edges[1])),
+                            (0, self.figure_edges[0]),
+                            (self.figure_edges[1], self.figure_edges[0]),
+                            (1, self.figure_edges[0]),
+                            (1, self.figure_edges[1]),
+                            (self.figure_edges[0], self.figure_edges[1]),
+                            (0, self.figure_edges[1])),
                         'RIGHT')
             case 'corner':
                 sides = frozenset((state[0], state[2]))
@@ -108,10 +119,14 @@ class SnakeRenderer:
             (0.8, 0.1)  #Центр-право-верх
         )
 
-        head_global = self.rotate_and_transform_part(head_local, x, y, direction)
+        rotated_head = self.rotate_part(head_local, direction)
+        head_global = self.transform_part(rotated_head, x, y)
         self.draw_polygon(head_global, self.head_color)
 
-    def rotate_and_transform_part(self, part_local, x, y, direction):
+    def interpolate_local_shape(self, alpha):
+        pass
+
+    def rotate_part(self, part_local, direction):
         match direction:
             case 'RIGHT':
                 pass
@@ -121,7 +136,9 @@ class SnakeRenderer:
                 part_local = tuple((1 - xx, 1 - yy) for xx, yy in part_local)
             case 'DOWN':
                 part_local = tuple((1 - yy, xx) for xx, yy in part_local)
+        return part_local
 
+    def transform_part(self, part_local, x, y):
         part_global = []
 
         for local_x, local_y in part_local:
@@ -137,7 +154,8 @@ class SnakeRenderer:
         )
         direction = self.get_side(logical_snake[-1], logical_snake[-2])
 
-        tail_global = self.rotate_and_transform_part(tail_local, tail[0], tail[1], direction)
+        rotated_tail = self.rotate_part(tail_local, direction)
+        tail_global = self.transform_part(rotated_tail, tail[0], tail[1])
         self.draw_polygon(tail_global, self.tail_color)
 
 
