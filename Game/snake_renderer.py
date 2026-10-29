@@ -51,10 +51,13 @@ class SnakeRenderer:
         """Готовим тело к отрисовке"""
         for i, seg in enumerate(visual_snake[1:-1]):
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
-            old_state = self.get_state(old_snake[i], old_snake[i+1], old_snake[i+2])
+            old_state = self.get_state(old_snake[i], old_snake[i+1], old_snake[i+2]) if i + 2 < len(old_snake) else None
             local_seg, direction = self.identify_body_part(cur_state)
             seg_global = self.rotate_and_transform_part(local_seg, seg[0], seg[1], direction)
             self.draw_polygon(seg_global, self.body_color)
+
+            if old_state is not None and old_state != cur_state:
+                print(f'Сегмент {i + 1}: {old_state} -> {cur_state}')
 
     def identify_body_part(self, state):
         """Готовим части тела к отрисовке"""
