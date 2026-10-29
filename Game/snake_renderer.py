@@ -67,7 +67,14 @@ class SnakeRenderer:
                     old_state[1] == 'hor' and
                     cur_state[1] == 'corner' and
                     direction == 'RIGHT'):
-                rotated_seg = self.interpolate_local_shape(old_local, local_seg, alpha)
+                rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
+
+            if (old_state is not None
+                    and old_state[1] == 'vert'
+                    and cur_state[1] == 'corner'
+                    and direction == 'RIGHT'
+            ):
+                rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
 
             seg_global = self.transform_part(rotated_seg, seg[0], seg[1])
             self.draw_polygon(seg_global, self.body_color)
@@ -80,11 +87,13 @@ class SnakeRenderer:
         match state[1]:
             case 'vert':
                 return ((
-                            (self.figure_edges[0], 0),
-                            (self.figure_edges[1], 0),
-                            (self.figure_edges[1], 1),
-                            (self.figure_edges[0], 1)),
-                        'RIGHT')
+                            (self.figure_edges[0], 0),  # 0
+                            (self.figure_edges[1], 0),  # 1
+                            (self.figure_edges[1], 0.5),  # 2
+                            (self.figure_edges[1], 1),  # 3
+                            (self.figure_edges[0], 1),  # 4
+                            (self.figure_edges[0], 0.5)  # 5
+                        ), 'RIGHT')
             case 'hor':
                 return ((
                             (0, self.figure_edges[0]),
@@ -131,6 +140,7 @@ class SnakeRenderer:
         self.draw_polygon(head_global, self.head_color)
 
     def interpolate_local_shape(self, old_local, new_local, alpha):
+
         cur_local = []
         for (old_x, old_y), (target_x, target_y) in zip(old_local, new_local):
             cur_local.append(
