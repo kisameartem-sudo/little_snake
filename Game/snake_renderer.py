@@ -55,29 +55,42 @@ class SnakeRenderer:
             cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
             # Получаем состояние сегмента в начальной точке перемещения
             old_state = self.get_state(old_snake[i], old_snake[i+1], old_snake[i+2]) if i + 2 < len(old_snake) else None
-            #Определяем вид сегмента для конечной точки перемещения
-            local_seg, direction = self.identify_body_part(cur_state)
-            # Определяем вид сегмента для начальной точки перемещения
-            if old_state is not None:
-                old_local, old_direction = self.identify_body_part(old_state)
 
-            rotated_seg = self.rotate_part(local_seg, direction)
+            #Получаем полигон после анимации
+            new_points, cur_direction = self.get_body_polygon(cur_state)
+            # Получаем полигон до анимации
+            old_points, old_direction = (
+                self.get_body_polygon(old_state)
+                if old_state is not None
+                else (None, None)
+            )
 
-            if (old_state is not None and
-                    old_state[1] == 'hor' and
-                    cur_state[1] == 'corner' and
-                    direction == 'RIGHT'):
-                rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
+            # if (old_state is not None and
+            #         old_state[1] == 'hor' and
+            #         cur_state[1] == 'corner' and
+            #         direction == 'RIGHT'):
+            #     rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
 
-            if (old_state is not None
+            if (old_points is not None
                     and old_state[1] == 'vert'
                     and cur_state[1] == 'corner'
-                    and direction == 'RIGHT'
+                    and cur_direction == 'RIGHT'
             ):
-                rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
+                interpolated_seg = self.interpolate_local_shape(old_points, new_points, alpha)
 
-            seg_global = self.transform_part(rotated_seg, seg[0], seg[1])
+            seg_global = self.transform_part(interpolated_seg, seg[0], seg[1])
             self.draw_polygon(seg_global, self.body_color)
+
+    def get_body_polygon(self, state):
+        local_points, direction = self.identify_body_part(state)
+        return self.rotate_part(local_points, direction), direction
+
+    def animate_body_shape(self, old_state, new_state, alpha):
+        # Получить обе фигуры
+        # Согласовать порядок вершин
+        # Выполнить интерполяцию
+        # Вернуть промежуточный полигон
+        pass
 
     def identify_body_part(self, state):
         """Готовим части тела к отрисовке"""
@@ -85,15 +98,15 @@ class SnakeRenderer:
         match state[1]:
             case 'vert':
                 return ((
-                            (a, 0), (b, 0),  # Верхнее ребро
-                            (b, 0.5),  # Центр-право
-                            (b, 1), (a, 1),  # Нижнее ребро
-                            (a, 0.5)  # Центр-лево
+                            (a, 0), (b, 0),  # Верхнее ребро  0 1
+                            (b, 0.5),  # Центр-право          2
+                            (b, 1), (a, 1),  # Нижнее ребро   3 4
+                            (a, 0.5)  # Центр-лево            5
                         ), 'RIGHT')
             case 'hor':
                 return ((
-                            (0, a), (b, a), (1, a),  # Верхнее ребро
-                            (1, b), (a, b), (0, b)  # Нижнее ребро
+                            (0, a), (0.5, a), (1, a),  # Верхнее ребро 0 1 2
+                            (1, b), (0.5, b), (0, b)  # Нижнее ребро 3 4 5
                         ), 'RIGHT')
             case 'corner':
                 sides = frozenset((state[0], state[2]))
@@ -107,10 +120,10 @@ class SnakeRenderer:
                 elif sides == frozenset(('LEFT', 'UP')):
                     direction = 'UP'
                 return ((
-                            (a, 0), (b, 0),  # Верхнее ребро
-                            (b, a),  # Внутренний поворотный угол
-                            (1, a), (1, b),  # Правое ребро
-                            (a, b)  # Внешний поворотный угол
+                            (a, 0), (b, 0),  # Верхнее ребро       0 1
+                            (b, a),  # Внутренний поворотный угол  2
+                            (1, a), (1, b),  # Правое ребро        3 4
+                            (a, b)  # Внешний поворотный угол      5
                         ), direction)
 
     def draw_head(self, x, y, direction):
