@@ -79,30 +79,22 @@ class SnakeRenderer:
             seg_global = self.transform_part(rotated_seg, seg[0], seg[1])
             self.draw_polygon(seg_global, self.body_color)
 
-            if old_state is not None and old_state != cur_state:
-                print(f'Сегмент {i + 1}: {old_state} -> {cur_state}')
-
     def identify_body_part(self, state):
         """Готовим части тела к отрисовке"""
+        a, b = self.figure_edges[0], self.figure_edges[1]
         match state[1]:
             case 'vert':
                 return ((
-                            (self.figure_edges[0], 0),  # 0
-                            (self.figure_edges[1], 0),  # 1
-                            (self.figure_edges[1], 0.5),  # 2
-                            (self.figure_edges[1], 1),  # 3
-                            (self.figure_edges[0], 1),  # 4
-                            (self.figure_edges[0], 0.5)  # 5
+                            (a, 0), (b, 0),  # Верхнее ребро
+                            (b, 0.5),  # Центр-право
+                            (b, 1), (a, 1),  # Нижнее ребро
+                            (a, 0.5)  # Центр-лево
                         ), 'RIGHT')
             case 'hor':
                 return ((
-                            (0, self.figure_edges[0]),
-                            (self.figure_edges[1], self.figure_edges[0]),
-                            (1, self.figure_edges[0]),
-                            (1, self.figure_edges[1]),
-                            (self.figure_edges[0], self.figure_edges[1]),
-                            (0, self.figure_edges[1])),
-                        'RIGHT')
+                            (0, a), (b, a), (1, a),  # Верхнее ребро
+                            (1, b), (a, b), (0, b)  # Нижнее ребро
+                        ), 'RIGHT')
             case 'corner':
                 sides = frozenset((state[0], state[2]))
 
@@ -115,13 +107,11 @@ class SnakeRenderer:
                 elif sides == frozenset(('LEFT', 'UP')):
                     direction = 'UP'
                 return ((
-                    (self.figure_edges[0], 0),
-                    (self.figure_edges[1], 0),
-                    (self.figure_edges[1], self.figure_edges[0]),
-                    (1, self.figure_edges[0]),
-                    (1, self.figure_edges[1]),
-                    (self.figure_edges[0], self.figure_edges[1])),
-                        direction)
+                            (a, 0), (b, 0),  # Верхнее ребро
+                            (b, a),  # Внутренний поворотный угол
+                            (1, a), (1, b),  # Правое ребро
+                            (a, b)  # Внешний поворотный угол
+                        ), direction)
 
     def draw_head(self, x, y, direction):
         head_local = (
