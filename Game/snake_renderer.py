@@ -52,31 +52,13 @@ class SnakeRenderer:
         for i, seg in enumerate(visual_snake[1:-1]):
             """Разбиваем тело не сегменты и работаем с каждым сегментом отдельно"""
             #Получаем состояние сегмента в конечной точке перемещения
-            cur_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
+            new_state = self.get_state(logical_snake[i], logical_snake[i+1], logical_snake[i+2])
             # Получаем состояние сегмента в начальной точке перемещения
             old_state = self.get_state(old_snake[i], old_snake[i+1], old_snake[i+2]) if i + 2 < len(old_snake) else None
+            # Готовим анимацию
+            interpolated_seg = self.animate_body_shape(old_state, new_state, alpha)
 
-            #Получаем полигон после анимации
-            new_points, cur_direction = self.get_body_polygon(cur_state)
-            # Получаем полигон до анимации
-            old_points, old_direction = (
-                self.get_body_polygon(old_state)
-                if old_state is not None
-                else (None, None)
-            )
 
-            # if (old_state is not None and
-            #         old_state[1] == 'hor' and
-            #         cur_state[1] == 'corner' and
-            #         direction == 'RIGHT'):
-            #     rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
-
-            if (old_points is not None
-                    and old_state[1] == 'vert'
-                    and cur_state[1] == 'corner'
-                    and cur_direction == 'RIGHT'
-            ):
-                interpolated_seg = self.interpolate_local_shape(old_points, new_points, alpha)
 
             seg_global = self.transform_part(interpolated_seg, seg[0], seg[1])
             self.draw_polygon(seg_global, self.body_color)
@@ -86,11 +68,32 @@ class SnakeRenderer:
         return self.rotate_part(local_points, direction), direction
 
     def animate_body_shape(self, old_state, new_state, alpha):
-        # Получить обе фигуры
-        # Согласовать порядок вершин
-        # Выполнить интерполяцию
-        # Вернуть промежуточный полигон
-        pass
+        # Получаем новый полигон, к которому необходимо привести старый
+        new_points, new_direction = self.get_body_polygon(new_state)
+        # Получаем старый полигон, если он есть
+        old_points, old_direction = (
+            self.get_body_polygon(old_state)
+            if old_state is not None
+            else (None, None)
+        )
+
+        # if (old_state is not None and
+        #         old_state[1] == 'hor' and
+        #         cur_state[1] == 'corner' and
+        #         direction == 'RIGHT'):
+        #     rotated_seg = self.interpolate_local_shape(old_local, rotated_seg, alpha)
+
+        #←↑
+
+        # Рассматриваем изменение движения ↓→
+        if (old_points is not None
+                and old_state[1] == 'vert'
+                and new_state[1] == 'corner'
+                and old_direction == 'DOWN' and new_direction == 'RIGHT'
+        ):
+            return self.interpolate_local_shape(old_points, new_points, alpha)
+
+        return new_points
 
     def identify_body_part(self, state):
         """Готовим части тела к отрисовке"""
