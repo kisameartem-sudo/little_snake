@@ -65,13 +65,13 @@ class SnakeRenderer:
 
     def get_body_polygon(self, state):
         local_points, direction = self.identify_body_part(state)
-        return self.rotate_part(local_points, direction), direction
+        return self.rotate_part(local_points, direction)
 
     def animate_body_shape(self, old_state, new_state, alpha):
         # Получаем новый полигон, к которому необходимо привести старый
-        new_points, new_direction = self.get_body_polygon(new_state)
+        new_points = self.get_body_polygon(new_state)
         # Получаем старый полигон, если он есть
-        old_points, old_direction = (
+        old_points = (
             self.get_body_polygon(old_state)
             if old_state is not None
             else (None, None)
@@ -89,7 +89,6 @@ class SnakeRenderer:
         if (old_points is not None
                 and old_state[1] == 'vert'
                 and new_state[1] == 'corner'
-                and old_direction == 'DOWN' and new_direction == 'RIGHT'
         ):
             return self.interpolate_local_shape(old_points, new_points, alpha)
 
