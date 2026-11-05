@@ -21,7 +21,7 @@ class SnakeRenderer:
         tail_side = self.get_side(seg_cur, seg_next)
         if head_side in vert_shape and tail_side in vert_shape:
             shape = 'vert'
-        elif head_side in vert_shape and tail_side in hor_shape:
+        elif head_side in hor_shape and tail_side in hor_shape:
             shape = 'hor'
         else: shape = 'corner'
         return {'head_side': head_side, 'shape': shape, 'tail_side': tail_side}
@@ -155,14 +155,23 @@ class SnakeRenderer:
         return cur_local
 
     def rotate_part(self, part_local, direction):
-        match direction:
-            case 'RIGHT':
+        rotation_angles = {
+            'RIGHT': 0,
+            'DOWN': 90,
+            'LEFT': 180,
+            'UP': 270
+        }
+
+        rotation = rotation_angles[direction]
+
+        match rotation:
+            case 0:
                 pass
-            case 'UP':
+            case 270:
                 part_local = tuple((yy, 1 - xx) for xx, yy in part_local)
-            case 'LEFT':
+            case 180:
                 part_local = tuple((1 - xx, 1 - yy) for xx, yy in part_local)
-            case 'DOWN':
+            case 90:
                 part_local = tuple((1 - yy, xx) for xx, yy in part_local)
         return part_local
 
