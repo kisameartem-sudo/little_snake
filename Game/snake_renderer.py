@@ -15,15 +15,15 @@ class SnakeRenderer:
 
     def get_state(self,seg_prev, seg_cur, seg_next):
         """Определяем состояние сегментов тела"""
-        prev_state = 'vert' if seg_prev[0] == seg_cur[0] else 'hor'
-        next_state = 'vert' if seg_next[0] == seg_cur[0] else 'hor'
-        if prev_state == next_state:
-            cur_state = prev_state
+        head_side = 'vert' if seg_prev[0] == seg_cur[0] else 'hor'
+        tail_side = 'vert' if seg_next[0] == seg_cur[0] else 'hor'
+        if head_side == tail_side:
+            shape = head_side
         else:
-            prev_state = self.get_side(seg_cur, seg_prev)
-            next_state = self.get_side(seg_cur, seg_next)
-            cur_state = 'corner'
-        return prev_state, cur_state, next_state
+            head_side = self.get_side(seg_cur, seg_prev)
+            tail_side = self.get_side(seg_cur, seg_next)
+            shape = 'corner'
+        return {'head_side': head_side, 'shape': shape, 'tail_side': tail_side}
 
     def get_side(self, cur, neighbour):
         """Определяем направление сегментов для угла"""
@@ -74,7 +74,7 @@ class SnakeRenderer:
         old_points = (
             self.get_body_polygon(old_state)
             if old_state is not None
-            else (None, None)
+            else None
         )
 
         # if (old_state is not None and
@@ -87,8 +87,8 @@ class SnakeRenderer:
 
         # Рассматриваем изменение движения ↓→
         if (old_points is not None
-                and old_state[1] == 'vert'
-                and new_state[1] == 'corner'
+                and old_state['shape'] == 'vert'
+                and new_state['shape'] == 'corner'
         ):
             return self.interpolate_local_shape(old_points, new_points, alpha)
 
@@ -97,7 +97,7 @@ class SnakeRenderer:
     def identify_body_part(self, state):
         """Готовим части тела к отрисовке"""
         a, b = self.figure_edges[0], self.figure_edges[1]
-        match state[1]:
+        match state['shape']:
             case 'vert':
                 return ((
                             (a, 0), (b, 0),  # Верхнее ребро  0 1
@@ -111,7 +111,7 @@ class SnakeRenderer:
                             (1, b), (0.5, b), (0, b)  # Нижнее ребро 3 4 5
                         ), 'RIGHT')
             case 'corner':
-                sides = frozenset((state[0], state[2]))
+                sides = frozenset((state['head_side'], state['tail_side']))
 
                 if sides == frozenset(('UP', 'RIGHT')):
                     direction = 'RIGHT'
