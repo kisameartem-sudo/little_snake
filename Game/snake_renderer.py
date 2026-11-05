@@ -1,4 +1,5 @@
 import pygame
+
 from snake.little_snake.colors import color_manager
 
 class SnakeRenderer:
@@ -66,7 +67,8 @@ class SnakeRenderer:
 
     def get_body_polygon(self, state):
         local_points, direction = self.identify_body_part(state)
-        return self.rotate_part(local_points, direction)
+        rotation = self.direction_to_rotation(direction)
+        return self.rotate_part(local_points, rotation)
 
     def animate_body_shape(self, old_state, new_state, alpha):
         # Получаем новый полигон, к которому необходимо привести старый
@@ -141,7 +143,8 @@ class SnakeRenderer:
             (0.8, 0.1)  #Центр-право-верх
         )
 
-        rotated_head = self.rotate_part(head_local, direction)
+        rotation = self.direction_to_rotation(direction) if direction else None
+        rotated_head = self.rotate_part(head_local, rotation)
         head_global = self.transform_part(rotated_head, x, y)
         self.draw_polygon(head_global, self.head_color)
 
@@ -154,16 +157,7 @@ class SnakeRenderer:
             )
         return cur_local
 
-    def rotate_part(self, part_local, direction):
-        rotation_angles = {
-            'RIGHT': 0,
-            'DOWN': 90,
-            'LEFT': 180,
-            'UP': 270
-        }
-
-        rotation = rotation_angles[direction]
-
+    def rotate_part(self, part_local, rotation):
         match rotation:
             case 0:
                 pass
@@ -174,6 +168,15 @@ class SnakeRenderer:
             case 90:
                 part_local = tuple((1 - yy, xx) for xx, yy in part_local)
         return part_local
+
+    def direction_to_rotation(self, direction):
+        rotation_angles = {
+            'RIGHT': 0,
+            'DOWN': 90,
+            'LEFT': 180,
+            'UP': 270
+        }
+        return rotation_angles[direction]
 
     def transform_part(self, part_local, x, y):
         part_global = []
@@ -190,8 +193,8 @@ class SnakeRenderer:
             (0, 0.5)
         )
         direction = self.get_side(logical_snake[-1], logical_snake[-2])
-
-        rotated_tail = self.rotate_part(tail_local, direction)
+        rotation = self.direction_to_rotation(direction)
+        rotated_tail = self.rotate_part(tail_local, rotation)
         tail_global = self.transform_part(rotated_tail, tail[0], tail[1])
         self.draw_polygon(tail_global, self.tail_color)
 
