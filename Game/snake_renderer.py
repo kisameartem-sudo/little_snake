@@ -15,14 +15,15 @@ class SnakeRenderer:
 
     def get_state(self,seg_prev, seg_cur, seg_next):
         """Определяем состояние сегментов тела"""
-        head_side = 'vert' if seg_prev[0] == seg_cur[0] else 'hor'
-        tail_side = 'vert' if seg_next[0] == seg_cur[0] else 'hor'
-        if head_side == tail_side:
-            shape = head_side
-        else:
-            head_side = self.get_side(seg_cur, seg_prev)
-            tail_side = self.get_side(seg_cur, seg_next)
-            shape = 'corner'
+        vert_shape = {'UP', 'DOWN'}
+        hor_shape = {'LEFT', 'RIGHT'}
+        head_side = self.get_side(seg_cur, seg_prev)
+        tail_side = self.get_side(seg_cur, seg_next)
+        if head_side in vert_shape and tail_side in vert_shape:
+            shape = 'vert'
+        elif head_side in vert_shape and tail_side in hor_shape:
+            shape = 'hor'
+        else: shape = 'corner'
         return {'head_side': head_side, 'shape': shape, 'tail_side': tail_side}
 
     def get_side(self, cur, neighbour):
